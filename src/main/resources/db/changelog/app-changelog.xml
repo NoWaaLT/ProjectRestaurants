@@ -5,5 +5,6 @@
 
     <include file="db/changelog/scripts/V1_entities_creation/create_orders_table.sql"/>
     <include file="db/changelog/scripts/V1_entities_creation/create_users_table.sql"/>
+    <include file="db/changelog/scripts/V1_entities_creation/create_products_table_cheap.sql"/>
 
 </databaseChangeLog>
