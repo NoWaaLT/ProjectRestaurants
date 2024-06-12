@@ -1,4 +1,4 @@
-package com.orioninc.ProjectRestaurants.restaurant.cheap.products;
+package com.orioninc.ProjectRestaurants.restaurant.elite.products;
 
 import com.orioninc.ProjectRestaurants.restaurant.Products;
 import jakarta.persistence.Entity;
@@ -6,8 +6,8 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 
 @Entity
-@Table(name = "products_cheap")
+@Table(name = "products_elite")
 @AllArgsConstructor
-public class CheapProducts extends Products {
+public class EliteProducts extends Products {
 
 }

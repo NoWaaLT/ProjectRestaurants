@@ -7,18 +7,14 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @MappedSuperclass
-public abstract class Products {
+public abstract class Quantity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "product_name")
-    private String productName;
-
-    @Column(name = "product_price")
-    private float productPrice;
-
-    @Column(name = "product_balance")
-    private int productBalance;
-
+    @Column(name = "recipe_id")
+    private int recipeId;
+    @Column(name = "product_id")
+    private int productId;
+    @Column(name = "product_quantity")
+    private int quantity;
 }

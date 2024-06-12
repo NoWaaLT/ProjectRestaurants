@@ -1,29 +1,54 @@
 package com.orioninc.ProjectRestaurants.restaurant.cheap.products;
 
-import com.orioninc.ProjectRestaurants.restaurant.Products;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
+@RequestMapping("/api/restaurants/cheap/products")
 public class CheapProductsController {
     @Autowired
     private CheapProductsRepository cheapProductsRepository;
 
-    @GetMapping(value = "/api/restaurants/cheap/products")
+    @GetMapping(value = "/get")
     public List<CheapProducts> getProducts() {
         return cheapProductsRepository.findAll();
     }
 
-    @PostMapping(value = "/api/restaurants/cheap/products/save")
+    @PostMapping(value = "/save")
     public String saveCheapProducts(@RequestBody CheapProducts cheapProducts) {
         cheapProductsRepository.save(cheapProducts);
         return "Saved...";
+    }
+
+    @PutMapping(value = "/update/{id}")
+    public String updateCheapProducts(@PathVariable long id, @RequestBody CheapProducts cheapProducts) {
+        Optional<CheapProducts> cheapProductsOptional = cheapProductsRepository.findById(id);
+        if (cheapProductsOptional.isPresent()) {
+            CheapProducts existingCheapProducts = cheapProductsOptional.get();
+            existingCheapProducts.setProductName(cheapProducts.getProductName());
+            existingCheapProducts.setProductPrice(cheapProducts.getProductPrice());
+            existingCheapProducts.setProductBalance(cheapProducts.getProductBalance());
+            cheapProductsRepository.save(existingCheapProducts);
+            return "Updated..";
+        } else {
+            return "Product not found";
+        }
+    }
+
+    @DeleteMapping(value = "/delete/{id}")
+    public String deleteCheapProduct(@PathVariable long id) {
+        Optional<CheapProducts> cheapProductsOptional = cheapProductsRepository.findById(id);
+        if(cheapProductsOptional.isPresent()) {
+            CheapProducts deleteCheapProduct = cheapProductsOptional.get();
+            cheapProductsRepository.delete(deleteCheapProduct);
+            return "Delete product with the id:" + id;
+        }
+        else {
+            return "Product not found";
+        }
     }
 
     @GetMapping(value = "/")
