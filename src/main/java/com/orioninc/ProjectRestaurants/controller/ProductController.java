@@ -1,7 +1,9 @@
 package com.orioninc.ProjectRestaurants.controller;
 
 import com.orioninc.ProjectRestaurants.DTO.ProductDTO;
+import com.orioninc.ProjectRestaurants.DTO.ProductDTOMapper;
 import com.orioninc.ProjectRestaurants.model.Product;
+import com.orioninc.ProjectRestaurants.model.Restaurant;
 import com.orioninc.ProjectRestaurants.service.ProductService;
 
 import lombok.AllArgsConstructor;
@@ -15,35 +17,27 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
-
-//    @GetMapping(value = "/get")
-//    public List<Product> findAllProduct() {
-//        return productService.findAllProduct();
-//    }
+    private final ProductDTOMapper productDTOMapper;
 
     @GetMapping(value = "/{id}/products/get")
     public List<ProductDTO> findAllProduct(@PathVariable("id") String id) {
         return productService.findAllProductByRestaurant(id);
     }
 
-    @PostMapping(value = "{id}/products/save")
+    @PostMapping(value = "/products/save")
     public Product saveProduct(@RequestBody Product product) {
         return productService.saveProduct(product);
     }
 
-    @PutMapping(value = "/update/{id}")
-    public Product updateProduct(@PathVariable long id, @RequestBody Product product) {
-        return productService.updateProduct(id, product);
+    @PutMapping(value = "/products/update")
+    public ProductDTO updateProduct(@RequestBody ProductDTO productDTO) {
+        Product updatedProduct = productService.updateProduct(productDTO);
+        return productDTOMapper.apply(updatedProduct);
     }
 
-    @DeleteMapping(value = "/delete/{id}")
+    @DeleteMapping(value = "/products/delete/{id}")
     public void deleteProduct(@PathVariable long id) {
         productService.deleteProduct(id);
     }
-
-//    @GetMapping(value = "/")
-//    public String sayHello() {
-//        return "Hello";
-//    }
 
 }

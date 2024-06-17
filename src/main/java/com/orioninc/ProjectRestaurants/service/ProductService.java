@@ -8,8 +8,7 @@ import java.util.List;
 public interface ProductService {
 
     List<ProductDTO> findAllProductByRestaurant(String id);
-//    ProductDTO getProduct(String id);
     Product saveProduct(Product product);
-    Product updateProduct(long id, Product product);
+    Product updateProduct(ProductDTO productDTO);
     void deleteProduct(long id);
 }

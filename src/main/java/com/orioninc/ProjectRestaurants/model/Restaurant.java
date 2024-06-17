@@ -1,5 +1,6 @@
 package com.orioninc.ProjectRestaurants.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,42 +32,10 @@ public class Restaurant {
     private List<Order> orderList;
 
     @OneToMany(mappedBy = "restaurant")
+    @JsonManagedReference
     private List<Product> productList;
 
     @OneToMany(mappedBy = "restaurant")
     private List<Menu> menuList;
-
-//    public Restaurant(Long id) {
-//        int idR = Math.toIntExact(id);
-//
-//        switch (idR) {
-//            case 1 -> {
-//                this.id = id;
-//                this.restaurantName = "Santino Moreno";
-//                this.restaurantType = CHEAP;
-//                this.orderList = null;
-//                this.productList = null;
-//                this.menuList = null;
-//            }
-//
-//            case 2 -> {
-//                this.id = id;
-//                this.restaurantName = "Pachamama Dinner Club";
-//                this.restaurantType = MEDIUM;
-//                this.orderList = null;
-//                this.productList = null;
-//                this.menuList = null;
-//            }
-//
-//            case 3 -> {
-//                this.id = id;
-//                this.restaurantName = "Amandus";
-//                this.restaurantType = ELITE;
-//                this.orderList = null;
-//                this.productList = null;
-//                this.menuList = null;
-//            }
-//        }
-//    }
 
 }

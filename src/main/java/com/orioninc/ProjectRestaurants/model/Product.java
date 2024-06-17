@@ -1,5 +1,6 @@
 package com.orioninc.ProjectRestaurants.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,6 +30,7 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name = "fk_restaurant_id", referencedColumnName = "id")
+    @JsonBackReference
     private Restaurant restaurant;
 
 //    @OneToMany(mappedBy = "product")
