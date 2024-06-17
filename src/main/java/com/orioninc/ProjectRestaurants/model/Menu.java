@@ -6,32 +6,27 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Entity
-@Table(name = "products")
-
-public class Product {
+@Table(name = "menus")
+public class Menu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "product_name")
-    private String productName;
-
-    @Column(name = "product_price")
-    private Float productPrice;
-
-    @Column(name = "product_balance")
-    private Integer productBalance;
+    @Column(name = "menu_name")
+    private String menuName;
 
     @ManyToOne
     @JoinColumn(name = "fk_restaurant_id", referencedColumnName = "id")
     private Restaurant restaurant;
 
-//    @OneToMany(mappedBy = "product")
-//    private Set<RecipeQuantity> recipeQuantities;
+    @OneToMany(mappedBy = "menu")
+    private List<Recipe> recipeList;
 
 }

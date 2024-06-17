@@ -3,10 +3,14 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <include file="db/changelog/scripts/V1_entities_creation/create_orders_table.sql"/>
-    <include file="db/changelog/scripts/V1_entities_creation/create_users_table.sql"/>
-    <include file="db/changelog/scripts/V1_entities_creation/create_products_table_cheap.sql"/>
-    <include file="db/changelog/scripts/V1_entities_creation/create_products_table_medium.sql"/>
-    <include file="db/changelog/scripts/V1_entities_creation/create_products_table_elite.sql"/>
+    <include file="db/changelog/scripts/V1_entities_creation/create_user_table.sql"/>
+    <include file="db/changelog/scripts/V1_entities_creation/create_restaurant_table.sql"/>
+    <include file="db/changelog/scripts/V1_entities_creation/create_order_table.sql"/>
+    <include file="db/changelog/scripts/V1_entities_creation/create_menu_table.sql"/>
+    <include file="db/changelog/scripts/V1_entities_creation/create_products_table.sql"/>
+    <include file="db/changelog/scripts/V1_entities_creation/create_recipe_table.sql"/>
+    <include file="db/changelog/scripts/V1_entities_creation/create_recipe_quantities_table.sql"/>
+    <include file="db/changelog/scripts/V2_data_initialization/import_restaurants_data.sql"/>
+    <include file="db/changelog/scripts/V2_data_initialization/import_restaurants_data_2_3.sql"/>
 
 </databaseChangeLog>

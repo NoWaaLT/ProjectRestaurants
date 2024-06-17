@@ -11,27 +11,20 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "products")
-
-public class Product {
+@Table(name = "orders")
+public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "product_name")
-    private String productName;
-
-    @Column(name = "product_price")
-    private Float productPrice;
-
-    @Column(name = "product_balance")
-    private Integer productBalance;
+    @Column(name = "order_name")
+    private String orderName;
 
     @ManyToOne
     @JoinColumn(name = "fk_restaurant_id", referencedColumnName = "id")
     private Restaurant restaurant;
 
-//    @OneToMany(mappedBy = "product")
-//    private Set<RecipeQuantity> recipeQuantities;
-
+    @ManyToOne
+    @JoinColumn(name = "fk_user_id", referencedColumnName = "id")
+    private User user;
 }
