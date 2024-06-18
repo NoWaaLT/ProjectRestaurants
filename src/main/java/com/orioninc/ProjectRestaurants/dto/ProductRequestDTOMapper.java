@@ -1,4 +1,4 @@
-package com.orioninc.ProjectRestaurants.DTO;
+package com.orioninc.ProjectRestaurants.dto;
 
 import com.orioninc.ProjectRestaurants.model.Product;
 import com.orioninc.ProjectRestaurants.model.Restaurant;

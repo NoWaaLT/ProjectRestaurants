@@ -1,9 +1,8 @@
 package com.orioninc.ProjectRestaurants.controller;
 
-import com.orioninc.ProjectRestaurants.DTO.ProductDTO;
-import com.orioninc.ProjectRestaurants.DTO.ProductDTOMapper;
+import com.orioninc.ProjectRestaurants.dto.ProductDTO;
+import com.orioninc.ProjectRestaurants.dto.ProductDTOMapper;
 import com.orioninc.ProjectRestaurants.model.Product;
-import com.orioninc.ProjectRestaurants.model.Restaurant;
 import com.orioninc.ProjectRestaurants.service.ProductService;
 
 import lombok.AllArgsConstructor;

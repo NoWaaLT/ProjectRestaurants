@@ -1,4 +1,4 @@
-package com.orioninc.ProjectRestaurants.DTO;
+package com.orioninc.ProjectRestaurants.dto;
 
 public record ProductDTO(Long id,
                          String productName,

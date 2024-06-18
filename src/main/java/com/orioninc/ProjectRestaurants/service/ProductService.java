@@ -1,6 +1,6 @@
 package com.orioninc.ProjectRestaurants.service;
 
-import com.orioninc.ProjectRestaurants.DTO.ProductDTO;
+import com.orioninc.ProjectRestaurants.dto.ProductDTO;
 import com.orioninc.ProjectRestaurants.model.Product;
 
 import java.util.List;
