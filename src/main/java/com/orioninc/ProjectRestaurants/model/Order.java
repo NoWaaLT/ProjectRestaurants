@@ -25,6 +25,10 @@ public class Order {
     private Restaurant restaurant;
 
     @ManyToOne
-    @JoinColumn(name = "fk_user_id", referencedColumnName = "id")
+    @JoinColumn(name = "fk_username", referencedColumnName = "username")
     private User user;
+
+    public Order(Restaurant restaurant) {
+        this.restaurant = restaurant;
+    }
 }

@@ -1,0 +1,2 @@
+ALTER TABLE orders
+MODIFY fk_username VARCHAR(255) NOT NULL;

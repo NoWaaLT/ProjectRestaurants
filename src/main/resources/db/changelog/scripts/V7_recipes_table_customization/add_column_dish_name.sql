@@ -1,0 +1,2 @@
+ALTER TABLE recipes
+ADD COLUMN dish_name VARCHAR(255);

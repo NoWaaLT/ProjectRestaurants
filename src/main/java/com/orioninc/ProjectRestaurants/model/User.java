@@ -1,5 +1,6 @@
 package com.orioninc.ProjectRestaurants.model;
 
+import com.orioninc.ProjectRestaurants.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

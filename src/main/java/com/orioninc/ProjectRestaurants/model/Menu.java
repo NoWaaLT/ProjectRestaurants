@@ -26,7 +26,10 @@ public class Menu {
     @JoinColumn(name = "fk_restaurant_id", referencedColumnName = "id")
     private Restaurant restaurant;
 
+    @Column(name = "restaurant_name")
+    private String restaurantName;
+
     @OneToMany(mappedBy = "menu")
-    private List<Recipe> recipeList;
+    private List<Dish> dishList;
 
 }

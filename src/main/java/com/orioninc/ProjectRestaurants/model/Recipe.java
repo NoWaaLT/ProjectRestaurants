@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Set;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -19,17 +17,20 @@ public class Recipe {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "recipe_name")
-    private String recipeName;
+    @ManyToOne
+    @JoinColumn(name = "fk_dish_id", referencedColumnName = "id")
+    private Dish dish;
 
-    @Column(name = "recipe_price")
-    private Float recipePrice;
+    @Column(name = "dish_name")
+    private String dishName;
 
     @ManyToOne
-    @JoinColumn(name = "fk_menu_id", referencedColumnName = "id")
-    private Menu menu;
+    @JoinColumn(name = "fk_product_id", referencedColumnName = "id")
+    private Product product;
 
-    @OneToMany(mappedBy = "recipe")
-    private Set<RecipeQuantity> recipeQuantities;
+    @Column(name = "product_name")
+    private String productName;
 
+    @Column(name = "quantity")
+    private Integer quantity;
 }

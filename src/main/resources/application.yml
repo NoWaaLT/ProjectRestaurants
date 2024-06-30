@@ -1,4 +1,5 @@
 spring:
+
     application:
         name: ProjectRestaurants
     datasource:
@@ -16,4 +17,7 @@ spring:
         show-sql: true
     liquibase:
         change-log: classpath:/db/changelog/app-changelog.xml
-        default-schema: restaurant_db
+        default-schema:
+    output:
+        ansi:
+            enabled: ALWAYS

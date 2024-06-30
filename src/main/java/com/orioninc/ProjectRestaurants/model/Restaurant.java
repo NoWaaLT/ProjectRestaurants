@@ -1,6 +1,7 @@
 package com.orioninc.ProjectRestaurants.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.orioninc.ProjectRestaurants.enums.RestaurantType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
+
 @Entity
 @Table(name = "restaurants")
 public class Restaurant {

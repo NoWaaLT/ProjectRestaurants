@@ -12,5 +12,26 @@
     <include file="db/changelog/scripts/V1_entities_creation/create_recipe_quantities_table.sql"/>
     <include file="db/changelog/scripts/V2_data_initialization/import_restaurants_data.sql"/>
     <include file="db/changelog/scripts/V2_data_initialization/import_restaurants_data_2_3.sql"/>
+    <include file="db/changelog/scripts/V3_products_table_customization/add_unique_ columns_to_products.sql"/>
+    <include file="db/changelog/scripts/V3_products_table_customization/change_type_of_balance_column_to_float.sql"/>
+    <include file="db/changelog/scripts/V3_products_table_customization/add_minimum_balance_column_to_products.sql"/>
+    <include file="db/changelog/scripts/V3_products_table_customization/add_column_expirable.sql"/>
+    <include file="db/changelog/scripts/V4_products_expire_entity_creation/create_products_expire_table.sql"/>
+    <include file="db/changelog/scripts/V5_products_table_customization_2/change_type_of_expirable_column.sql"/>
+    <include file="db/changelog/scripts/V5_products_table_customization_2/change_type_of_balance_column.sql"/>
+    <include file="db/changelog/scripts/V6_dish_table_customization/change_name_of_recipes_table_to_dishes.sql"/>
+    <include file="db/changelog/scripts/V6_dish_table_customization/change_column_name_from_recipe_name_to_dish_name.sql"/>
+    <include file="db/changelog/scripts/V6_dish_table_customization/change_column_name_from_recipe_price_to_dish_price.sql"/>
+    <include file="db/changelog/scripts/V7_recipes_table_customization/rename_table_from_recipe_quantity_to_recipe.sql"/>
+    <include file="db/changelog/scripts/V7_recipes_table_customization/change_column_name_from_fk_recipe_id_to_fk_dish_id.sql"/>
+    <include file="db/changelog/scripts/V7_recipes_table_customization/add_column_dish_name.sql"/>
+    <include file="db/changelog/scripts/V7_recipes_table_customization/add_column_product_name.sql"/>
+    <include file="db/changelog/scripts/V8_menus_table_customization/add_column_restaurant_name.sql"/>
+    <include file="db/changelog/scripts/V9_products_table_customization_3/change_minimum_balance_type_to_float.sql"/>
+    <include file="db/changelog/scripts/V10_users_table_customization/change_username_column_to_unique.sql"/>
+    <include file="db/changelog/scripts/V11_order_table_customization/drop_constraint_fk_orders_user.sql"/>
+    <include file="db/changelog/scripts/V11_order_table_customization/add_constraint_fk_username_to_username.sql"/>
+
+    <include file="db/changelog/scripts/V11_order_table_customization/change_fk_user_id_column_type_to_varchar.sql"/>
 
 </databaseChangeLog>
