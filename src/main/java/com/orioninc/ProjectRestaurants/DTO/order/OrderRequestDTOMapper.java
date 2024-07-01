@@ -13,17 +13,17 @@ import java.util.function.Function;
 
 @AllArgsConstructor
 @Service
-public class OrderRequestDTOMapper implements Function<OrderRequestDTO, Order> {
+public class OrderRequestDTOMapper implements Function<OrderDTO, Order> {
 
     private final RestaurantRepository restaurantRepository;
     private final UserRepository userRepository;
 
     @Override
-    public Order apply(OrderRequestDTO orderRequestDTO) {
+    public Order apply(OrderDTO orderDTO) {
 
         Order order = new Order();
 
-        Restaurant restaurant = restaurantRepository.findById(orderRequestDTO.restaurantId()).orElseThrow(()
+        Restaurant restaurant = restaurantRepository.findById(orderDTO.restaurantId()).orElseThrow(()
                 -> new RestaurantNotFoundException("Restaurant not found"));
 
         order.setRestaurant(restaurant);

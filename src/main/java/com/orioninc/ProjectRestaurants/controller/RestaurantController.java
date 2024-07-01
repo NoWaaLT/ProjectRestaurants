@@ -6,6 +6,7 @@ import com.orioninc.ProjectRestaurants.service.RestaurantService;
 
 
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,27 +18,32 @@ public class RestaurantController {
 
     private final RestaurantService restaurantService;
 
-    @GetMapping(value = "/api/get")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @GetMapping(value = "/get")
     public List<RestaurantDTO> getAllRestaurants() {
         return restaurantService.getAllRestaurants();
     }
 
-    @GetMapping(value = "/api/get/{id}")
+
+    @GetMapping(value = "/api/{id}")
     public RestaurantDTO getRestaurantById(@PathVariable Long id) {
         return restaurantService.getRestaurantById(id);
     }
 
-    @PostMapping(value = "/api/save")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PostMapping(value = "/save")
     public Restaurant saveRestaurant(@RequestBody RestaurantDTO restaurantDTO) {
         return restaurantService.saveRestaurant(restaurantDTO);
     }
 
-    @PutMapping(value = "/api/update")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PutMapping(value = "/update")
     Restaurant updateRestaurant(@RequestBody RestaurantDTO restaurantDTO) {
         return restaurantService.updateRestaurant(restaurantDTO);
     }
 
-    @DeleteMapping(value = "/api/delete/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @DeleteMapping(value = "/delete/{id}")
     void deleteRestaurant(@PathVariable Long id) {
         restaurantService.deleteRestaurant(id);
     }

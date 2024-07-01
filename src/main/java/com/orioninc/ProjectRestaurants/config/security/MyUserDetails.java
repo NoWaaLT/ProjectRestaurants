@@ -1,14 +1,11 @@
 package com.orioninc.ProjectRestaurants.config.security;
 
 import com.orioninc.ProjectRestaurants.model.User;
-import com.orioninc.ProjectRestaurants.repository.UserRepository;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 

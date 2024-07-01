@@ -8,11 +8,12 @@ import com.orioninc.ProjectRestaurants.exceptions.MenuNotFoundException;
 import com.orioninc.ProjectRestaurants.model.Menu;
 import com.orioninc.ProjectRestaurants.repository.MenuRepository;
 import com.orioninc.ProjectRestaurants.service.MenuService;
+
 import lombok.AllArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -27,8 +28,8 @@ public class MenuServiceImpl implements MenuService {
 
         return menuRepository.findAll()
                 .stream()
-                .map(menuResponseDTOMapper).
-                collect(Collectors.toList());
+                .map(menuResponseDTOMapper)
+                .toList();
     }
 
     @Override
@@ -38,7 +39,7 @@ public class MenuServiceImpl implements MenuService {
                 .stream()
                 .filter((Menu menu) -> menu.getRestaurant().getId().equals(id))
                 .map(menuResponseDTOMapper)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
