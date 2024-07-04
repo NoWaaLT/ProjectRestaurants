@@ -1,5 +1,6 @@
 package com.orioninc.ProjectRestaurants.config.security;
 
+import com.orioninc.ProjectRestaurants.enums.Permission;
 import com.orioninc.ProjectRestaurants.model.User;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -22,6 +23,11 @@ public class MyUserDetails implements UserDetails {
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return List.of(new SimpleGrantedAuthority(user.getRole().name()));      // Can be bad
   }
+
+//  @Override
+//  public Collection<? extends GrantedAuthority> getAuthorities() {
+//    return List.of(new SimpleGrantedAuthority(user.getRole().name()));      // Can be bad
+//  }
 
   @Override
   public String getPassword() {

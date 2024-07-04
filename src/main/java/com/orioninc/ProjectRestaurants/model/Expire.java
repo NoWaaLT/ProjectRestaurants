@@ -33,4 +33,7 @@ public class Expire {
     @JoinColumn(name = "fk_product_id", referencedColumnName = "id")
     private Product product;
 
+    @Column(name = "removed")
+    private Boolean removedProduct;
+
 }

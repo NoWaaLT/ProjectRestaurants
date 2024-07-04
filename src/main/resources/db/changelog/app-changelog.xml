@@ -31,7 +31,9 @@
     <include file="db/changelog/scripts/V10_users_table_customization/change_username_column_to_unique.sql"/>
     <include file="db/changelog/scripts/V11_order_table_customization/drop_constraint_fk_orders_user.sql"/>
     <include file="db/changelog/scripts/V11_order_table_customization/add_constraint_fk_username_to_username.sql"/>
-
     <include file="db/changelog/scripts/V11_order_table_customization/change_fk_user_id_column_type_to_varchar.sql"/>
+    <include file="db/changelog/scripts/V12_products_expire_table_customization/add_removed_column.sql"/>
+    <include file="db/changelog/scripts/V12_products_expire_table_customization/fill_removed_column_values.sql"/>
+    <include file="db/changelog/scripts/V12_products_expire_table_customization/change_removed_column_values.sql"/>
 
 </databaseChangeLog>

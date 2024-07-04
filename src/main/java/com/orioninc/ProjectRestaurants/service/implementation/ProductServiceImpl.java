@@ -8,8 +8,10 @@ import com.orioninc.ProjectRestaurants.repository.ProductRepository;
 import com.orioninc.ProjectRestaurants.repository.RestaurantRepository;
 import com.orioninc.ProjectRestaurants.service.ProductExpireService;
 import com.orioninc.ProjectRestaurants.service.ProductService;
+import com.querydsl.core.types.dsl.BooleanExpression;
 
 import com.orioninc.ProjectRestaurants.utils.ExpireDateUtil;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
@@ -147,5 +149,11 @@ public class ProductServiceImpl implements ProductService {
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
     }
+
+//    public List<Product> findProductsByCondition(String name) {
+//        QProduct qProduct = QProduct.product;
+//        BooleanExpression filterByName = qProduct.name.eq(name);
+//        return (List<Product>) productRepository.findAll(filterByName);
+//    }
 
 }

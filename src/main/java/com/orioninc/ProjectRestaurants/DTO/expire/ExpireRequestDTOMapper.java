@@ -31,6 +31,7 @@ public class ExpireRequestDTOMapper implements Function<ExpireRequestDTO, Expire
                 .orElseThrow(() -> new ProductNotFoundException("Product not found"));
 
         expire.setProduct(product);
+        expire.setRemovedProduct(false);
 
         return expire;
     }

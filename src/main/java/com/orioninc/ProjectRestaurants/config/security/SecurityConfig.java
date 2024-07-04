@@ -1,5 +1,7 @@
 package com.orioninc.ProjectRestaurants.config.security;
 
+import com.orioninc.ProjectRestaurants.enums.Permission;
+import com.orioninc.ProjectRestaurants.enums.UserRole;
 import com.orioninc.ProjectRestaurants.service.MyUserDetailsService;
 
 import org.springframework.context.annotation.Bean;
@@ -22,26 +24,29 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
   @Bean
-  public UserDetailsService userDetailsService() { // provides save way to LoadUserByUsername()
+  public UserDetailsService userDetailsService() {    // provides save way to LoadUserByUsername()
 
     return new MyUserDetailsService();
   }
 
+
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     return http.csrf(AbstractHttpConfigurer::disable)
-        .authorizeHttpRequests(auth ->
+        .authorizeHttpRequests(
+            auth ->
                 auth.requestMatchers("*")
-                    .permitAll().anyRequest().authenticated())    // Any other request only can be reach for authenticated users
-                    .httpBasic(Customizer.withDefaults())         // It's says it will be in form of http/https
-                    .formLogin(Customizer.withDefaults())         // It's says how login form should be handled
-                    .build();
-
+                    .permitAll()
+                    .anyRequest()
+                    .authenticated())           // Any other request only can be reach for authenticated users
+        .httpBasic(Customizer.withDefaults())   // It's says it will be in form of http/https
+        .formLogin(Customizer.withDefaults())   // It's says how login form should be handled
+        .build();
   }
 
   @Bean
-  public AuthenticationProvider authenticationProvider() {
-    DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+  public AuthenticationProvider authenticationProvider() {                    // Process the request to retrieve user credentials
+    DaoAuthenticationProvider provider = new DaoAuthenticationProvider();     // through UserServiceDetails via Dao
     provider.setUserDetailsService(userDetailsService());
     provider.setPasswordEncoder(passwordEncoder());
 
@@ -49,7 +54,7 @@ public class SecurityConfig {
   }
 
   @Bean
-  public PasswordEncoder passwordEncoder() { // One way code.
-    return new BCryptPasswordEncoder(); // TODO need add salt
+  public PasswordEncoder passwordEncoder() {    // One side code encryption
+    return new BCryptPasswordEncoder();         // Built-in salt added
   }
 }

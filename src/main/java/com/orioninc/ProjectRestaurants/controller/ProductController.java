@@ -24,32 +24,32 @@ public class ProductController {
   @GetMapping(value = "/{id}/products/get")
   public List<ProductDTO> findAllProduct(@PathVariable("id") Long id) {
     return productService.getAllProductByRestaurant(id);
-  } // Works
+  }
 
   @PreAuthorize("hasAuthority('ROLE_EMPLOYEE')")
   @GetMapping(value = "/products/get/{id}")
   public ProductDTO getProductById(@PathVariable Long id) {
     return productService.getProductById(id);
-  } // Works
+  }
 
   @PreAuthorize("hasAuthority('ROLE_ADMIN')")
   @PostMapping(value = "/products/save")
   public Product saveProduct(@RequestBody ProductDTO productDTO) {
 
     return productService.saveProduct(productDTO);
-  } // Works
+  }
 
   @PreAuthorize("hasAuthority('ROLE_ADMIN')")
   @PostMapping(value = "/products/saveAll")
   public List<ProductDTO> saveProducts(@RequestBody List<ProductDTO> productDTOList) {
     return productService.saveProducts(productDTOList);
-  } // Works
+  }
 
   @PreAuthorize("hasAuthority('ROLE_ADMIN')")
   @PostMapping(value = "/products/warehouse-save")
   public Product saveProductFromWarehouse(@RequestBody ProductWhDTO productWhDTO) {
     return productService.saveProductFromWarehouse(productWhDTO);
-  } // Works
+  }
 
   @PreAuthorize("hasAuthority('ROLE_ADMIN')")
   @PutMapping(value = "/products/update")

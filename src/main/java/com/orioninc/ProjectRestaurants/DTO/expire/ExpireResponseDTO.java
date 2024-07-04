@@ -5,5 +5,6 @@ import java.util.Date;
 public record ExpireResponseDTO(Long id,
                                 Date expireDate,
                                 Float batchQuantity,
-                                Long productId) {
+                                Long productId,
+                                Boolean removedProduct) {
 }
