@@ -1,6 +1,5 @@
-package com.orioninc.ProjectRestaurants.service;
+package com.orioninc.ProjectRestaurants.auth;
 
-import com.orioninc.ProjectRestaurants.config.security.MyUserDetails;
 import com.orioninc.ProjectRestaurants.exceptions.UserNotFoundException;
 import com.orioninc.ProjectRestaurants.model.User;
 import com.orioninc.ProjectRestaurants.repository.UserRepository;
@@ -16,12 +15,12 @@ import java.util.Optional;
 @Service
 public class MyUserDetailsService implements UserDetailsService {
 
-  @Autowired
-  private UserRepository userRepository;
+  @Autowired private UserRepository userRepository;
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     Optional<User> user = userRepository.findByUsername(username);
+
     return user.map(MyUserDetails::new)
         .orElseThrow(() -> new UserNotFoundException("User is not found"));
   }

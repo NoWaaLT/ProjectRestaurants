@@ -46,7 +46,7 @@ public class Product {
     private Integer productExpirable;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)     // n+1
     private Set<Expire> expireSet;
 
 

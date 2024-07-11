@@ -12,7 +12,9 @@ public class UserResponseDTOMapper implements Function<User, UserResponseDTO> {
     public UserResponseDTO apply(User user) {
         return new UserResponseDTO(
                 user.getUsername(),
-                user.getRole()
+                user.getRoles()
         );
     }
 }
+
+// TODO db refactoring, done

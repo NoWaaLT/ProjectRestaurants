@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS permissions (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    action_name VARCHAR(255) NOT NULL
+);

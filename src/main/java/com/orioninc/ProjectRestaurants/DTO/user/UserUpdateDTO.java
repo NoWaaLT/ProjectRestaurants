@@ -1,9 +1,11 @@
 package com.orioninc.ProjectRestaurants.DTO.user;
 
-import com.orioninc.ProjectRestaurants.enums.UserRole;
+import com.orioninc.ProjectRestaurants.DTO.role.RoleDTO;
+
+import java.util.List;
 
 public record UserUpdateDTO(Long id,
                             String username,
                             String password,
-                            UserRole userRole) {
+                            List<RoleDTO> roles) {
 }

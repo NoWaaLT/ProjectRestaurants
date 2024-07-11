@@ -1,8 +1,9 @@
 package com.orioninc.ProjectRestaurants.DTO.user;
 
-import com.orioninc.ProjectRestaurants.enums.UserRole;
+import com.orioninc.ProjectRestaurants.model.Role;
+
+import java.util.List;
 
 public record UserResponseDTO(String username,
-                              UserRole role) {
-
+                             List<Role> roles) {
 }

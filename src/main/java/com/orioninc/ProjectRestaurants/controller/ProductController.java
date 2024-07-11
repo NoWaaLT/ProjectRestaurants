@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/restaurant")
+//@PreAuthorize("hasRole('ADMIN')")
 @AllArgsConstructor
 public class ProductController {
 
@@ -64,12 +65,11 @@ public class ProductController {
     productService.deleteProduct(id);
   }
 
-  @PreAuthorize(
-      "hasAuthority('ROLE_ADMIN') || hasAuthority('ROLE_EMPLOYEE') || hasAuthority('ROLE_USER')")
-  @GetMapping(value = "/welcome")
-  public String welcome() {
-    return "Welcome to Spring!";
-  }
+//  @PreAuthorize(
+//      "hasAuthority('ROLE_ADMIN') || hasAuthority('ROLE_EMPLOYEE') || hasAuthority('ROLE_USER')")
+//  public String welcome() {
+//    return "Welcome to Spring!";
+//  }
 
   //    @GetMapping("warehouse/get")
   //    public String getWarehouseInventory() {

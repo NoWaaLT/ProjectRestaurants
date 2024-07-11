@@ -38,8 +38,12 @@ public class UserServiceImpl implements UserService {
     existingUser.setId(userToUpdate.getId());
     existingUser.setUsername(userToUpdate.getUsername());
     existingUser.setPasswordHash(userToUpdate.getPasswordHash());
-    existingUser.setRole(userToUpdate.getRole());
+//    existingUser.setRole(userToUpdate.getRole());
+    existingUser.setRoles(userToUpdate.getRoles());
 
     return existingUser;
   }
 }
+
+
+// TODO db refactoring, done

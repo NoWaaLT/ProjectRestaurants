@@ -30,14 +30,14 @@ public class Restaurant {
     @Column(name = "restaurant_type")
     private RestaurantType restaurantType;
 
-    @OneToMany(mappedBy = "restaurant")
+    @OneToMany(mappedBy = "restaurant")     // n+1
     private List<Order> orderList;
 
-    @OneToMany(mappedBy = "restaurant")
+    @OneToMany(mappedBy = "restaurant")     // n+1
     @JsonManagedReference
     private List<Product> productList;
 
-    @OneToMany(mappedBy = "restaurant")
+    @OneToMany(mappedBy = "restaurant")     // n+1
     private List<Menu> menuList;
 
 }

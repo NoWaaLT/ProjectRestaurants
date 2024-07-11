@@ -1,4 +1,5 @@
 <databaseChangeLog
+
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
@@ -20,10 +21,14 @@
     <include file="db/changelog/scripts/V5_products_table_customization_2/change_type_of_expirable_column.sql"/>
     <include file="db/changelog/scripts/V5_products_table_customization_2/change_type_of_balance_column.sql"/>
     <include file="db/changelog/scripts/V6_dish_table_customization/change_name_of_recipes_table_to_dishes.sql"/>
-    <include file="db/changelog/scripts/V6_dish_table_customization/change_column_name_from_recipe_name_to_dish_name.sql"/>
-    <include file="db/changelog/scripts/V6_dish_table_customization/change_column_name_from_recipe_price_to_dish_price.sql"/>
-    <include file="db/changelog/scripts/V7_recipes_table_customization/rename_table_from_recipe_quantity_to_recipe.sql"/>
-    <include file="db/changelog/scripts/V7_recipes_table_customization/change_column_name_from_fk_recipe_id_to_fk_dish_id.sql"/>
+    <include
+            file="db/changelog/scripts/V6_dish_table_customization/change_column_name_from_recipe_name_to_dish_name.sql"/>
+    <include
+            file="db/changelog/scripts/V6_dish_table_customization/change_column_name_from_recipe_price_to_dish_price.sql"/>
+    <include
+            file="db/changelog/scripts/V7_recipes_table_customization/rename_table_from_recipe_quantity_to_recipe.sql"/>
+    <include
+            file="db/changelog/scripts/V7_recipes_table_customization/change_column_name_from_fk_recipe_id_to_fk_dish_id.sql"/>
     <include file="db/changelog/scripts/V7_recipes_table_customization/add_column_dish_name.sql"/>
     <include file="db/changelog/scripts/V7_recipes_table_customization/add_column_product_name.sql"/>
     <include file="db/changelog/scripts/V8_menus_table_customization/add_column_restaurant_name.sql"/>
@@ -35,5 +40,14 @@
     <include file="db/changelog/scripts/V12_products_expire_table_customization/add_removed_column.sql"/>
     <include file="db/changelog/scripts/V12_products_expire_table_customization/fill_removed_column_values.sql"/>
     <include file="db/changelog/scripts/V12_products_expire_table_customization/change_removed_column_values.sql"/>
+    <include file="db/changelog/scripts/V15_user_table_customization_2/drop_column_role.sql"/>
+    <include file="db/changelog/scripts/V13_create_privileges_roles_tables/create_table_roles.sql"/>
+    <include file="db/changelog/scripts/V13_create_privileges_roles_tables/create_table_permissions.sql"/>
+    <include file="db/changelog/scripts/V13_create_privileges_roles_tables/create_join_table_role_permission.sql"/>
+    <include file="db/changelog/scripts/V14_create_join_table_users_roles/create_join_table_user_role.sql"/>
+    <include file="db/changelog/scripts/V16_data_initialization_2/import_roles_data.sql"/>
+    <include file="db/changelog/scripts/V16_data_initialization_2/import_permissions_data.sql"/>
+    <include file="db/changelog/scripts/V16_data_initialization_2/import_role_permissions_data.sql"/>
+    <include file="db/changelog/scripts/V16_data_initialization_2/import_user_role_data.sql"/>
 
 </databaseChangeLog>

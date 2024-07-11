@@ -1,11 +1,13 @@
 package com.orioninc.ProjectRestaurants.config.security;
 
-import com.orioninc.ProjectRestaurants.enums.Permission;
-import com.orioninc.ProjectRestaurants.enums.UserRole;
-import com.orioninc.ProjectRestaurants.service.MyUserDetailsService;
+import com.orioninc.ProjectRestaurants.permission.CustomPermissionEvaluator;
+import com.orioninc.ProjectRestaurants.auth.MyUserDetailsService;
 
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
@@ -21,14 +23,15 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@AllArgsConstructor
 public class SecurityConfig {
 
-  @Bean
-  public UserDetailsService userDetailsService() {    // provides save way to LoadUserByUsername()
+  private final CustomPermissionEvaluator customPermissionEvaluator;
 
+  @Bean
+  public UserDetailsService userDetailsService() { // provides save way to LoadUserByUsername()
     return new MyUserDetailsService();
   }
-
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -38,15 +41,17 @@ public class SecurityConfig {
                 auth.requestMatchers("*")
                     .permitAll()
                     .anyRequest()
-                    .authenticated())           // Any other request only can be reach for authenticated users
-        .httpBasic(Customizer.withDefaults())   // It's says it will be in form of http/https
-        .formLogin(Customizer.withDefaults())   // It's says how login form should be handled
+                    .authenticated()) // Any other request only can be reach for authenticated users
+        .httpBasic(Customizer.withDefaults()) // It's says it will be in form of http/https
+        .formLogin(Customizer.withDefaults()) // It's says how login form should be handled
         .build();
   }
 
   @Bean
-  public AuthenticationProvider authenticationProvider() {                    // Process the request to retrieve user credentials
-    DaoAuthenticationProvider provider = new DaoAuthenticationProvider();     // through UserServiceDetails via Dao
+  public AuthenticationProvider
+      authenticationProvider() { // Process the request to retrieve user credentials
+    DaoAuthenticationProvider provider =
+        new DaoAuthenticationProvider(); // through UserServiceDetails via Dao
     provider.setUserDetailsService(userDetailsService());
     provider.setPasswordEncoder(passwordEncoder());
 
@@ -54,7 +59,22 @@ public class SecurityConfig {
   }
 
   @Bean
-  public PasswordEncoder passwordEncoder() {    // One side code encryption
-    return new BCryptPasswordEncoder();         // Built-in salt added
+  public PasswordEncoder passwordEncoder() { // One side code encryption
+    return new BCryptPasswordEncoder(); // Built-in salt added
+  }
+
+  //  @Bean
+  //  public CustomPermissionEvaluator customPermissionEvaluator() {
+  //    return new CustomPermissionEvaluator();
+  //  }
+
+  @Bean
+  public MethodSecurityExpressionHandler expressionHandler(
+      CustomPermissionEvaluator customPermissionEvaluator) {
+
+    DefaultMethodSecurityExpressionHandler handler =
+        new DefaultMethodSecurityExpressionHandler(); // Utilize the CustomPermissionEvaluator
+    handler.setPermissionEvaluator(customPermissionEvaluator); // add the PermissionEvaluator
+    return handler;
   }
 }
