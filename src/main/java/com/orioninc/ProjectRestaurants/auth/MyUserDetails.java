@@ -14,8 +14,7 @@ public class MyUserDetails implements UserDetails {
 
   private User user;
 
-  public MyUserDetails(User user) {
-    this.user = user;
+  public MyUserDetails(User user) { this.user = user;
   }
 
   @Override
@@ -23,7 +22,11 @@ public class MyUserDetails implements UserDetails {
 
     List<Permission> permissionList =
         user.getRoles().stream().toList().stream()
-            .flatMap(role -> role.getPermissions().stream())  // FlatMap allows us to work with a list of lists
+            .flatMap(
+                role ->
+                    role
+                        .getPermissions()
+                        .stream()) // FlatMap allows us to work with a list of lists
             .toList();
 
     return permissionList.stream()

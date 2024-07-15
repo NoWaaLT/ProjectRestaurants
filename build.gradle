@@ -20,7 +20,7 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '3.3.0'
     implementation 'org.springframework.boot:spring-boot-starter-logging'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-log4j2', version: '3.3.0'
 
@@ -36,14 +36,12 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.32'
 
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
-
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '3.3.0'
 
     // jjwt
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.12.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.12.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.12.5'
-
 
     // queryDSL
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'

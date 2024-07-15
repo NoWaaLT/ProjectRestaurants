@@ -53,8 +53,10 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
           targetId,
           targetType,
           permission);
+
       return false;
     }
+
     return hasPrivilege(authentication, targetType, permission.toString());
   }
 
