@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 
+import java.security.Provider;
 import java.time.Instant;
 
 import java.util.Base64;
@@ -25,13 +26,11 @@ public class JwtService {
   private static final String SECRET =
       "9BD3BF9695E54B688D158C4A3CB2D4FB7475BE81B17788BAC51BBE63862AD77947B0D593007D3B5A55F8A5486EA6E5786111A6CC2BBC098B8B4B3CD311A257B1";
 
-  private static final long VALIDITY = TimeUnit.MINUTES.toMillis(30);
+  private static final long VALIDITY = TimeUnit.MINUTES.toMillis(1);
 
   public String generateToken(UserDetails userDetails) {
     Map<String, String> claims = new HashMap<>();
-    claims.put("iss", "https://www.orioninc.com"); // a person or company
-    claims.put("sub", userDetails.getUsername());
-    //    claims.put("iat", Date.from(Instant.now()));
+    claims.put("iss", "http://localhost:8080/"); // a person or company
 
     return Jwts.builder()
         .claims(claims)
@@ -47,6 +46,7 @@ public class JwtService {
     byte[] decodedKey = Base64.getDecoder().decode(SECRET);
 
     return Keys.hmacShaKeyFor(decodedKey);
+
   }
 
   public String extractUsername(String jwt) {
@@ -56,11 +56,7 @@ public class JwtService {
   }
 
   private Claims getClaims(String jwt) {
-    return Jwts.parser()
-            .verifyWith(generateKey())
-            .build()
-            .parseSignedClaims(jwt)
-            .getPayload();
+    return Jwts.parser().verifyWith(generateKey()).build().parseSignedClaims(jwt).getPayload();
   }
 
   public boolean isTokenValid(String jwt) {
