@@ -13,41 +13,43 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/restaurant")
+@RequestMapping("/api/products-expire")
 @AllArgsConstructor
 public class ExpireController {
 
     private final ProductExpireService productExpireService;
     private final ExpireRequestDTOMapper expireRequestDTOMapper;
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @GetMapping(value = "products/expires/get")
+    @PreAuthorize("hasPermission(#id, 'Expire', 'read')")
+    @GetMapping
     public List<ExpireResponseDTO> getAllProductsExpire() {
         return productExpireService.getAllProductExpires();
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @GetMapping(value = "products/expires/get/{id}")
+    @PreAuthorize("hasPermission(#id, 'Expire', 'read')")
+    @GetMapping(value = "/{id}")
     public ExpireResponseDTO getProductExpireById(@PathVariable Long id) {
         return productExpireService.getProductExpireById(id);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @PostMapping(value = "products/expires/save")
+    @PreAuthorize("hasPermission(#id, 'Expire', 'create')")
+    @PostMapping
     public Expire saveProductExpire(@RequestBody ExpireRequestDTO expireRequestDTO) {
         Expire expire = expireRequestDTOMapper.apply(expireRequestDTO);
 
         return productExpireService.saveProductExpire(expire);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    // TODO consider to make id by id in URI
+
+    @PreAuthorize("hasPermission(#id, 'Expire', 'update')")
     @PutMapping(value = "products/expire/")
     public Expire updateProductExpire(@RequestBody ExpireRequestDTO expireRequestDTO) {
         return productExpireService.updateProductExpire(expireRequestDTO);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @DeleteMapping(value = "products/expire/delete/{id}")
+    @PreAuthorize("hasPermission(#id, 'Expire', 'delete')")
+    @DeleteMapping(value = "/{id}")
     public void deleteProductExpire(@PathVariable Long id) {
         productExpireService.deleteProductExpire(id);
     }

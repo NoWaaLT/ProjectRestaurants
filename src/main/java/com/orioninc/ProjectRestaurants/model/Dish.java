@@ -33,3 +33,5 @@ public class Dish {
     private Set<Recipe> recipeQuantities;
 
 }
+
+// TODO leverage entities by spec. attributes

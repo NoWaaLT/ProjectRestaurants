@@ -54,3 +54,5 @@ public class Product {
 //    private Set<RecipeQuantity> recipeQuantities;
 
 }
+
+// TODO leverage entities by spec. attributes

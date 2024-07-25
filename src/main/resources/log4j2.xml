@@ -2,17 +2,27 @@
 <Configuration status="WARN">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <AnsiColors>
-                <KeyValuePair key="INFO" value="green" />
-                <KeyValuePair key="WARN" value="yellow" />
-                <KeyValuePair key="ERROR" value="red" />
-            </AnsiColors>
-            <PatternLayout pattern="%highlight{%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger{36} - %msg%n%throwable}" />
+            <PatternLayout pattern="%style{%d{DEFAULT}}{magenta} %highlight{%-5level} [%style{%X{id}}{red}] [%style{%t}{bright,yellow}] : %msg%n%style{%throwable}{red}" disableAnsi="false"/>
         </Console>
+        <RollingFile
+                name="rollingFile"
+                fileName="logs/application.log"
+                filePattern="logs/$${date:yyyy-MM}/application.%d{dd-MMM}.log.gz"
+                ignoreExceptions="false">
+            <PatternLayout>
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %X{id} %m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+            <DefaultRolloverStrategy max="5" />
+        </RollingFile>
     </Appenders>
     <Loggers>
         <Root level="info">
             <AppenderRef ref="Console" />
+            <AppenderRef ref="rollingFile" />
         </Root>
     </Loggers>
 </Configuration>
+

@@ -14,7 +14,7 @@ import java.util.Set;
 @Setter
 @Table(name = "permissions")
 @Entity
-public class Permission {
+public class  Permission {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,3 +26,5 @@ public class Permission {
   @Column(name = "action_name")
   private String actionName;
 }
+
+// TODO leverage entities by spec. attributes

@@ -49,5 +49,8 @@
     <include file="db/changelog/scripts/V16_data_initialization_2/import_permissions_data.sql"/>
     <include file="db/changelog/scripts/V16_data_initialization_2/import_role_permissions_data.sql"/>
     <include file="db/changelog/scripts/V16_data_initialization_2/import_user_role_data.sql"/>
-
+    <include file="db/changelog/scripts/V17_data_initialization_3/import_new_permission.sql"/>
+    <include file="db/changelog/scripts/V17_data_initialization_3/import_permissions_data_2.sql"/>
+    <include file="db/changelog/scripts/V17_data_initialization_3/import_permissions_data_3.sql"/>
+    <include file="db/changelog/scripts/V17_data_initialization_3/import_role_permission_2.sql"/>
 </databaseChangeLog>

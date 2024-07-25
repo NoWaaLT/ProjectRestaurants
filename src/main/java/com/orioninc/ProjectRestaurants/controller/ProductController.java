@@ -7,44 +7,50 @@ import com.orioninc.ProjectRestaurants.model.Product;
 import com.orioninc.ProjectRestaurants.service.ProductService;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/restaurant")
-//@PreAuthorize("hasRole('ADMIN')")
+@RequestMapping("/api/products")
 @AllArgsConstructor
+@Slf4j
 public class ProductController {
 
   private final ProductService productService;
   private final ProductResponseDTOMapper productResponseDTOMapper;
 
-  @PreAuthorize("hasAuthority('ROLE_EMPLOYEE')")
-  @GetMapping(value = "/{id}/products/get")
-  public List<ProductDTO> findAllProduct(@PathVariable("id") Long id) {
+  @PreAuthorize("hasPermission(#id, 'Product', 'read')")
+  @GetMapping(value = "/restaurant-{id}")
+  public List<ProductDTO> findAllProductsByRestaurantId(@PathVariable("id") Long id) {
     return productService.getAllProductByRestaurant(id);
   }
 
-  @PreAuthorize("hasAuthority('ROLE_EMPLOYEE')")
-  @GetMapping(value = "/products/get/{id}")
+  @PreAuthorize("hasPermission(#id, 'Product', 'read')")
+  @GetMapping(value = "/{id}")
   public ProductDTO getProductById(@PathVariable Long id) {
     return productService.getProductById(id);
   }
 
-  @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+  // TODO if we have to add new product to the list of products, id not needed
+
+  @PreAuthorize("hasPermission(#id, 'Product', 'create')")
   @PostMapping(value = "/products/save")
   public Product saveProduct(@RequestBody ProductDTO productDTO) {
 
     return productService.saveProduct(productDTO);
   }
 
-  @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+  @PreAuthorize("hasPermission(#id, 'Product', 'create')")
   @PostMapping(value = "/products/saveAll")
   public List<ProductDTO> saveProducts(@RequestBody List<ProductDTO> productDTOList) {
     return productService.saveProducts(productDTOList);
   }
+
+
+  // TODO ???
 
   @PreAuthorize("hasAuthority('ROLE_ADMIN')")
   @PostMapping(value = "/products/warehouse-save")
@@ -52,28 +58,22 @@ public class ProductController {
     return productService.saveProductFromWarehouse(productWhDTO);
   }
 
-  @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+
+  // TODO specify the id in url
+
+  @PreAuthorize("hasPermission(#id, 'Product', 'update')")
   @PutMapping(value = "/products/update")
   public ProductDTO updateProduct(@RequestBody ProductDTO productDTO) {
     Product updatedProduct = productService.updateProduct(productDTO);
     return productResponseDTOMapper.apply(updatedProduct);
   }
 
-  @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-  @DeleteMapping(value = "/products/delete/{id}")
+
+
+  @PreAuthorize("hasPermission(#id, 'Product', 'delete')")
+  @DeleteMapping(value = "/{id}")
   public void deleteProduct(@PathVariable long id) {
     productService.deleteProduct(id);
   }
-
-//  @PreAuthorize(
-//      "hasAuthority('ROLE_ADMIN') || hasAuthority('ROLE_EMPLOYEE') || hasAuthority('ROLE_USER')")
-//  public String welcome() {
-//    return "Welcome to Spring!";
-//  }
-
-  //    @GetMapping("warehouse/get")
-  //    public String getWarehouseInventory() {
-  //        return warehouseCustomerService.getJsonResponse();
-  //    }
 
 }

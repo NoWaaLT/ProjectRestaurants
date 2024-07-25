@@ -17,14 +17,14 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/restaurant")
+@RequestMapping("/api/orders")
 @AllArgsConstructor
 public class OrderController {
 
   private final OrderService orderService;
 
-  @PreAuthorize("hasAuthority('ROLE_USER')")
-  @GetMapping(value = "/my-order")
+  @PreAuthorize("hasPermission(#id, 'Order', 'read')")
+  @GetMapping(value = "/my-orders")
   public String getOrderByUser() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     Optional<Order> orderOptional = orderService.getOrderByUser(authentication.getName());
@@ -34,20 +34,22 @@ public class OrderController {
         .orElse("You don't have any orders.");
   }
 
-  @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-  @GetMapping(value = "/get-all-orders")
+  @PreAuthorize("hasPermission(#id, 'Order', 'read')")
+  @GetMapping
   public List<OrderResponseDTO> getAllOrders() {
     return orderService.getAllOrders();
   }
 
-  @PreAuthorize("hasAuthority('ROLE_EMPLOYEE')")
-  @GetMapping(value = "{id}/get-orders")
+  @PreAuthorize("hasPermission(#id, 'Order', 'read')")
+  @GetMapping(value = "/restaurant-{id}")
   public List<OrderResponseDTO> getAllOrdersByRestaurant(@PathVariable Long id) {
     return orderService.getAllOrdersByRestaurant(id);
   }
 
-  // save order for user
+  // TODO save order for user
 
-  // delete order for employee
+  // TODO delete order for employee
+
+  // TODO update order
 
 }

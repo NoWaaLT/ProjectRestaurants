@@ -5,9 +5,14 @@ import com.orioninc.ProjectRestaurants.exceptions.UserNotFoundException;
 import com.orioninc.ProjectRestaurants.model.User;
 import com.orioninc.ProjectRestaurants.repository.UserRepository;
 import com.orioninc.ProjectRestaurants.service.UserService;
+
 import lombok.AllArgsConstructor;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @AllArgsConstructor
 @Service
@@ -22,7 +27,6 @@ public class UserServiceImpl implements UserService {
   @Override
   public User saveUser(UserRequestDTO userRequestDTO) {
     userRequestDTO.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
-
     return userRepository.save(userRequestDTOMapper.apply(userRequestDTO));
   }
 
@@ -38,12 +42,15 @@ public class UserServiceImpl implements UserService {
     existingUser.setId(userToUpdate.getId());
     existingUser.setUsername(userToUpdate.getUsername());
     existingUser.setPasswordHash(userToUpdate.getPasswordHash());
-//    existingUser.setRole(userToUpdate.getRole());
     existingUser.setRoles(userToUpdate.getRoles());
 
     return existingUser;
   }
+
+  @Override
+  public List<UserResponseDTO> getAllUsers() {
+    return userRepository.findAll().stream()
+            .map(userResponseDTOMapper)
+            .toList();
+  }
 }
-
-
-// TODO db refactoring, done

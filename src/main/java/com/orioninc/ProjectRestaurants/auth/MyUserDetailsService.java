@@ -4,6 +4,7 @@ import com.orioninc.ProjectRestaurants.exceptions.UserNotFoundException;
 import com.orioninc.ProjectRestaurants.model.User;
 import com.orioninc.ProjectRestaurants.repository.UserRepository;
 
+import org.apache.logging.log4j.ThreadContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,6 +21,8 @@ public class MyUserDetailsService implements UserDetailsService {
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     Optional<User> user = userRepository.findByUsername(username);
+
+    ThreadContext.put("id", username);
 
     return user.map(MyUserDetails::new)
         .orElseThrow(() -> new UserNotFoundException("User is not found"));

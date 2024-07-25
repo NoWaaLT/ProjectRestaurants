@@ -14,38 +14,40 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/restaurant")
+@RequestMapping("/api/recipes")
 @AllArgsConstructor
 public class RecipeController {
 
     private final RecipeService recipeService;
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @GetMapping(value = "/recipes/get")
+    @PreAuthorize("hasPermission(#id, 'Recipe', 'read')")
+    @GetMapping
     public List<RecipeResponseDTO> getAllRecipes() {
         return recipeService.getAllRecipes();
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @GetMapping(value = "/recipes/get/{id}")
+    @PreAuthorize("hasPermission(#id, 'Recipe', 'read')")
+    @GetMapping(value = "/{id}")
     public RecipeResponseDTO getRecipeById(@PathVariable Long id) {
         return recipeService.getRecipeById(id);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @PostMapping(value = "/recipes/save")
+    @PreAuthorize("hasPermission(#id, 'Recipe', 'create')")
+    @PostMapping
     public Recipe saveRecipe(@RequestBody RecipeSaveDTO recipeSaveDTO) {
         return recipeService.saveRecipe(recipeSaveDTO);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    // TODO make it by id
+
+    @PreAuthorize("hasPermission(#id, 'Recipe', 'update')")
     @PutMapping(value = "/recipes/update")
     public Recipe updateRecipe(@RequestBody RecipeUpdateDTO recipeUpdateDTO) {
         return recipeService.updateRecipe(recipeUpdateDTO);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @DeleteMapping(value = "/recipes/delete/{id}")
+    @PreAuthorize("hasPermission(#id, 'Recipe', 'delete')")
+    @DeleteMapping(value = "/{id}")
     public void deleteRecipe(@PathVariable Long id) {
         recipeService.deleteRecipe(id);
     }

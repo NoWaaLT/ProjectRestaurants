@@ -19,51 +19,107 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
 
   private static final Logger logger = LogManager.getLogger(CustomPermissionEvaluator.class);
 
+//  @Override
+//  public boolean hasPermission(
+//      Authentication authentication, Object targetDomainObject, Object permission) {
+//
+//    if ((authentication == null)
+//        || (targetDomainObject == null)
+//        || !(permission instanceof String)) {
+//      logger.debug(
+//          "Invalid parameters: authentication={}, targetDomainObject={}, permission={}",
+//          authentication,
+//          targetDomainObject,
+//          permission);
+//      return false;
+//    }
+//
+//    final String targetType = targetDomainObject.getClass().getSimpleName();
+//
+//    logger.info("targetDomainObject :  targetDomainObject.getClass()={}", targetDomainObject);
+//
+//    logger.info("Evaluating permission: targetType={}, permission={}", targetType, permission);
+//
+//    return hasPrivilege(authentication, targetType, ((String) permission));
+//  }
+
   @Override
   public boolean hasPermission(
-      Authentication authentication, Object targetDomainObject, Object permission) {
+          Authentication authentication, Object targetDomainObject, Object permission) {
 
     if ((authentication == null)
-        || (targetDomainObject == null)
-        || !(permission instanceof String)) {
+            || (targetDomainObject == null)
+            || !(permission instanceof String)) {
       logger.debug(
-          "Invalid parameters: authentication={}, targetDomainObject={}, permission={}",
-          authentication,
-          targetDomainObject,
-          permission);
+              "Invalid parameters: authentication={}, targetDomainObject={}, permission={}",
+              authentication,
+              targetDomainObject,
+              permission);
       return false;
     }
 
-    final String targetType = targetDomainObject.getClass().getSimpleName();
+    final String targetType = targetDomainObject.getClass().getSimpleName().toUpperCase();
 
     logger.info("targetDomainObject :  targetDomainObject.getClass()={}", targetDomainObject);
 
     logger.info("Evaluating permission: targetType={}, permission={}", targetType, permission);
 
-    return hasPrivilege(authentication, targetType, ((String) permission));
+    return hasPrivilege(authentication, targetType, permission.toString().toUpperCase());
   }
+
+//
+//  @Override
+//  public boolean hasPermission(
+//      Authentication authentication, Serializable targetId, String targetType, Object permission) {
+//    if ((authentication == null) || (targetType == null) || !(permission instanceof String)) {
+//      logger.debug(
+//          "Invalid parameters: authentication={}, targetId={}, targetType={}, permission={}",
+//          authentication,
+//          targetId,
+//          targetType,
+//          permission);
+//
+//      return false;
+//    }
+//
+//    return hasPrivilege(authentication, targetType, permission.toString());
+//  }
+
+  //  private boolean hasPrivilege(Authentication auth, String targetType, String permission) {
+  //
+  //    for (GrantedAuthority grantedAuth : auth.getAuthorities()) {
+  //      if (grantedAuth.getAuthority().contains(permission)) {
+  //        return true;
+  //      }
+  //    }
+  //
+  //    logger.debug("Permission denied: targetType={}, permission={}", targetType, permission);
+  //
+  //    return false;
+  //  }
 
   @Override
   public boolean hasPermission(
-      Authentication authentication, Serializable targetId, String targetType, Object permission) {
+          Authentication authentication, Serializable targetId, String targetType, Object permission) {
     if ((authentication == null) || (targetType == null) || !(permission instanceof String)) {
       logger.debug(
-          "Invalid parameters: authentication={}, targetId={}, targetType={}, permission={}",
-          authentication,
-          targetId,
-          targetType,
-          permission);
+              "Invalid parameters: authentication={}, targetId={}, targetType={}, permission={}",
+              authentication,
+              targetId,
+              targetType,
+              permission);
 
       return false;
     }
 
-    return hasPrivilege(authentication, targetType, permission.toString());
+    return hasPrivilege(authentication, targetType.toUpperCase(), permission.toString().toUpperCase());
   }
 
   private boolean hasPrivilege(Authentication auth, String targetType, String permission) {
 
     for (GrantedAuthority grantedAuth : auth.getAuthorities()) {
-      if (grantedAuth.getAuthority().contains(permission)) {
+      if (grantedAuth.getAuthority().startsWith(targetType)
+          && grantedAuth.getAuthority().contains(permission)) {
         return true;
       }
     }

@@ -37,3 +37,5 @@ public class Expire {
     private Boolean removedProduct;
 
 }
+
+// TODO leverage entities by spec. attributes

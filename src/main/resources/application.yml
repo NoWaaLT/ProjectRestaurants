@@ -1,4 +1,14 @@
-spring:
+ logging:
+     file:
+         name: log/project_restaurants_default_log.log
+     level:
+         org:
+             springframework:
+                 web: INFO
+             hibernate: ERROR
+         com:
+             orioninc: DEBUG
+ spring:
     application:
         name: ProjectRestaurants
     datasource:
@@ -20,6 +30,11 @@ spring:
     output:
         ansi:
             enabled: ALWAYS
-logging:
-    level:
-        org.springframework.security: trace
+ management:
+     endpoints:
+         web:
+             exposure:
+                 include: health, info, metrics
+     endpoint:
+         health:
+             show-details: always

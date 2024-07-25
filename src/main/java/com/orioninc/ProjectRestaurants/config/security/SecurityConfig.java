@@ -1,10 +1,12 @@
 package com.orioninc.ProjectRestaurants.config.security;
 
+import com.orioninc.ProjectRestaurants.auth.AuthenticationFacadeImpl;
 import com.orioninc.ProjectRestaurants.auth.webtoken.JwtAuthenticationFilter;
 import com.orioninc.ProjectRestaurants.permission.CustomPermissionEvaluator;
 import com.orioninc.ProjectRestaurants.auth.MyUserDetailsService;
 
 import lombok.AllArgsConstructor;
+import org.apache.logging.log4j.ThreadContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
@@ -18,11 +20,13 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @EnableWebSecurity
@@ -34,39 +38,34 @@ public class SecurityConfig {
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
   @Bean
-  public UserDetailsService userDetailsService() { // provides save way to LoadUserByUsername()
+  public UserDetailsService userDetailsService() { // Provides save way to LoadUserByUsername()
     return new MyUserDetailsService();
   }
-
-  //    @Bean
-  //    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-  //      return http.csrf(AbstractHttpConfigurer::disable)
-  //          .authorizeHttpRequests(
-  //              auth ->
-  //                  auth.requestMatchers("*")
-  //                      .permitAll()
-  //                      .anyRequest()
-  //                      .authenticated())           // Any other request only can be reach for
-  // authenticated users
-  //          .httpBasic(Customizer.withDefaults())   // It's says it will be in form of http/https
-  //          .formLogin(Customizer.withDefaults())   // It's says how login form should be handled
-  //          .build();
-  //    }
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     return http.csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(
             auth ->
-                auth.requestMatchers("/api/restaurant/**")
+                auth.requestMatchers(
+                        "/api/restaurants/**",
+                        "/api/customer/**",
+                        "/api/products/**",
+                        "/api/products-expire",
+                        "/api/dishes/**",
+                        "/api/menus/**",
+                        "/api/orders/**",
+                        "/api/recipes/**")
                     .authenticated()
-                    .requestMatchers("/login", "/register")
+                    .requestMatchers("/register", "/authenticate", "/actuator")
                     .permitAll()
                     .anyRequest()
                     .anonymous())
         .httpBasic(Customizer.withDefaults()) // It's says it will be in form of http/https
         .formLogin(Customizer.withDefaults()) // It's says how login form should be handled
-        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(
+            jwtAuthenticationFilter, // To enable AuthFilter before the specified filter
+            UsernamePasswordAuthenticationFilter.class)
         .build();
   }
 
@@ -82,7 +81,7 @@ public class SecurityConfig {
   }
 
   @Bean
-  public AuthenticationManager authenticationManager() { // Used for JWT, to validate user and pass
+  public AuthenticationManager authenticationManager() { // Used for JJWT, to validate user and pass
     return new ProviderManager(authenticationProvider());
   }
 
@@ -103,6 +102,7 @@ public class SecurityConfig {
     DefaultMethodSecurityExpressionHandler handler =
         new DefaultMethodSecurityExpressionHandler(); // Utilize the CustomPermissionEvaluator
     handler.setPermissionEvaluator(customPermissionEvaluator); // add the PermissionEvaluator
+
     return handler;
   }
 }

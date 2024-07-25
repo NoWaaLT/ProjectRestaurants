@@ -15,6 +15,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
-
+@Slf4j
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;

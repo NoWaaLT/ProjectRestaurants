@@ -14,46 +14,48 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/restaurant")
+@RequestMapping("/api/menus")
 @AllArgsConstructor
 public class MenuController {
 
-    private final MenuService menuService;
-    private final MenuResponseDTOMapper menuResponseDTOMapper;
+  private final MenuService menuService;
+  private final MenuResponseDTOMapper menuResponseDTOMapper;
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @GetMapping(value = "/menus")
-    public List<MenuResponseDTO> getAllMenus() {
-        return menuService.getAllMenus();
-    }
-    @PreAuthorize("hasAuthority('ROLE_USER')")
-    @GetMapping(value = "/{id}/menus")
-    public List<MenuResponseDTO> getAllMenusByRestaurant(@PathVariable Long id) {
-        return menuService.getAllMenusByRestaurant(id);
-    }
+  @PreAuthorize("hasPermission(#id, 'Menu', 'read')")
+  @GetMapping
+  public List<MenuResponseDTO> getAllMenus() {
+    return menuService.getAllMenus();
+  }
 
-    @PreAuthorize("hasAuthority('ROLE_USER')")
-    @GetMapping(value = "/menus/menu_{id}")
-    public MenuResponseDTO getMenuById(@PathVariable Long id) {
-        return menuService.getMenuById(id);
-    }
+  @PreAuthorize("hasPermission(#id, 'Menu', 'read')")
+  @GetMapping(value = "/restaurant-{id}")
+  public List<MenuResponseDTO> getAllMenusByRestaurant(@PathVariable Long id) {
+    return menuService.getAllMenusByRestaurant(id);
+  }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @PostMapping(value = "/menus/save")
-        public Menu saveMenu(@RequestBody MenuRequestDTO menuRequestDTO) {
-        return menuService.saveMenu(menuRequestDTO);
-    }
+  @PreAuthorize("hasPermission(#id, 'Menu', 'read')")
+  @GetMapping(value = "/{id}")
+  public MenuResponseDTO getMenuById(@PathVariable Long id) {
+    return menuService.getMenuById(id);
+  }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @PutMapping(value = "/menus/update")
-    public MenuResponseDTO updateMenu(@RequestBody MenuRequestDTO menuRequestDTO) {
-        return menuResponseDTOMapper.apply(menuService.updateMenu(menuRequestDTO));
-    }
+  @PreAuthorize("hasPermission(#id, 'Menu', 'create')")
+  @PostMapping
+  public Menu saveMenu(@RequestBody MenuRequestDTO menuRequestDTO) {
+    return menuService.saveMenu(menuRequestDTO);
+  }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @DeleteMapping(value = "/menus/delete/{id}")
-    public void deleteMenu(@PathVariable Long id) {
-        menuService.deleteMenu(id);
-    }
+  // TODO make id in path
 
+  @PreAuthorize("hasPermission(#id, 'Menu', 'update')")
+  @PutMapping(value = "/menus/update")
+  public MenuResponseDTO updateMenu(@RequestBody MenuRequestDTO menuRequestDTO) {
+    return menuResponseDTOMapper.apply(menuService.updateMenu(menuRequestDTO));
+  }
+
+  @PreAuthorize("hasPermission(#id, 'Menu', 'delete')")
+  @DeleteMapping(value = "/{id}")
+  public void deleteMenu(@PathVariable Long id) {
+    menuService.deleteMenu(id);
+  }
 }

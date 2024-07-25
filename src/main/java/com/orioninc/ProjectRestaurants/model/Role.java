@@ -1,5 +1,7 @@
 package com.orioninc.ProjectRestaurants.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;
@@ -25,6 +27,7 @@ public class Role {
   @Column(name = "role_name", nullable = false)
   private String roleName;
 
+  @JsonManagedReference
   @ManyToMany(mappedBy = "roles")         // n+1
   private Set<User> users;
 
@@ -35,3 +38,5 @@ public class Role {
       inverseJoinColumns = @JoinColumn(name = "permission_id"))
   private List<Permission> permissions;
 }
+
+// TODO leverage entities by spec. attributes

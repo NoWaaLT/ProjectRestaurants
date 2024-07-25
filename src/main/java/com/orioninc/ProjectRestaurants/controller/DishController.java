@@ -13,45 +13,47 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/restaurant")
+@RequestMapping("/api/dishes")
 @AllArgsConstructor
 public class DishController {
 
   private final DishService dishService;
   private final DishResponseDTOMapper dishResponseDTOMapper;
 
-  @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-  @GetMapping(value = "/dishes/get")
+  @PreAuthorize("hasPermission(#id, 'Dish', 'read')")
+  @GetMapping
   public List<DishDTO> getAllDishes() {
     return dishService.getAllDishes();
   }
 
-  @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-  @GetMapping(value = "/dishes/{id}/get")
+  @PreAuthorize("hasPermission(#id, 'Dish', 'read')")
+  @GetMapping(value = "/menu-{id}")
   public List<DishDTO> getAllDishesByMenuId(@PathVariable Long id) {
     return dishService.getAllDishesByMenuId(id);
   }
 
-  @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-  @GetMapping(value = "/dishes/get/{id}")
+  @PreAuthorize("hasPermission(#id, 'Dish', 'read')")
+  @GetMapping(value = "/{id}")
   public DishDTO getDishById(@PathVariable Long id) {
     return dishResponseDTOMapper.apply(dishService.getDishById(id));
   }
 
-  @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-  @PostMapping(value = "/dishes/save")
+  @PreAuthorize("hasPermission(#id, 'Dish', 'create')")
+  @PostMapping
   public Dish saveDish(@RequestBody DishDTO dishDTO) {
     return dishService.saveDish(dishDTO);
   }
 
-  @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+  // TODO consider making update by id in uri
+
+  @PreAuthorize("hasPermission(#id, 'Dish', 'update')")
   @PutMapping(value = "/dishes/update")
   public Dish updateDish(@RequestBody DishDTO dishDTO) {
     return dishService.updateDish(dishDTO);
   }
 
-  @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-  @DeleteMapping(value = "/dishes/delete")
+  @PreAuthorize("hasPermission(#id, 'Dish', 'delete')")
+  @DeleteMapping(value = "/{id}")
   public void deleteDish(@PathVariable Long id) {
     dishService.deleteDish(id);
   }

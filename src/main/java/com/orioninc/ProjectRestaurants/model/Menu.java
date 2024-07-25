@@ -33,3 +33,5 @@ public class Menu {
     private List<Dish> dishList;
 
 }
+
+// TODO leverage entities by spec. attributes

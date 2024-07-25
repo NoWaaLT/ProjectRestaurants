@@ -1,5 +1,6 @@
 package com.orioninc.ProjectRestaurants.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,6 +26,7 @@ public class Order {
     private Restaurant restaurant;
 
     @ManyToOne
+    @JsonManagedReference
     @JoinColumn(name = "fk_username", referencedColumnName = "username")
     private User user;
 
@@ -32,3 +34,5 @@ public class Order {
         this.restaurant = restaurant;
     }
 }
+
+// TODO leverage entities by spec. attributes
