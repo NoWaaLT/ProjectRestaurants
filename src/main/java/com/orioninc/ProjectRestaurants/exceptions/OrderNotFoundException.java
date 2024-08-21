@@ -1,11 +1,13 @@
 package com.orioninc.ProjectRestaurants.exceptions;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import com.orioninc.ProjectRestaurants.enums.AppText;
 
-@ResponseStatus(value = HttpStatus.NOT_FOUND)
-public class OrderNotFoundException extends RuntimeException {
-    OrderNotFoundException(String message) {
-        super(message);
-    }
+public class OrderNotFoundException extends NotFoundException {
+  OrderNotFoundException(AppText message, Long id) {
+    super(message.toString() + id);
+  }
+
+  public OrderNotFoundException(AppText message) {
+    super(message.toString());
+  }
 }

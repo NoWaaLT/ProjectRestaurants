@@ -1,18 +1,18 @@
 package com.orioninc.ProjectRestaurants.service;
 
-import com.orioninc.ProjectRestaurants.DTO.recipe.RecipeResponseDTO;
-import com.orioninc.ProjectRestaurants.DTO.recipe.RecipeSaveDTO;
-import com.orioninc.ProjectRestaurants.DTO.recipe.RecipeUpdateDTO;
+import com.orioninc.ProjectRestaurants.dto.recipe.RecipeResponseDto;
+import com.orioninc.ProjectRestaurants.dto.recipe.RecipeSaveDto;
+import com.orioninc.ProjectRestaurants.dto.recipe.RecipeUpdateDto;
 import com.orioninc.ProjectRestaurants.model.Recipe;
 
 import java.util.List;
 
 public interface RecipeService {
 
-    List<RecipeResponseDTO> getAllRecipes();
-    RecipeResponseDTO getRecipeById(Long id);
-    Recipe saveRecipe(RecipeSaveDTO recipeSaveDTO);
-    Recipe updateRecipe(RecipeUpdateDTO recipeUpdateDTO);
+    List<RecipeResponseDto> getAllRecipes();
+    RecipeResponseDto getRecipeById(Long id);
+    Recipe saveRecipe(RecipeSaveDto recipeSaveDTO);
+    Recipe updateRecipe(RecipeUpdateDto recipeUpdateDTO);
     void deleteRecipe(Long id);
 
 }

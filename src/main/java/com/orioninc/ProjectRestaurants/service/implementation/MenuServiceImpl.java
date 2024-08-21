@@ -1,9 +1,6 @@
 package com.orioninc.ProjectRestaurants.service.implementation;
 
-import com.orioninc.ProjectRestaurants.DTO.menu.MenuResponseDTO;
-import com.orioninc.ProjectRestaurants.DTO.menu.MenuResponseDTOMapper;
-import com.orioninc.ProjectRestaurants.DTO.menu.MenuRequestDTO;
-import com.orioninc.ProjectRestaurants.DTO.menu.MenuRequestDTOMapper;
+import com.orioninc.ProjectRestaurants.dto.menu.*;
 import com.orioninc.ProjectRestaurants.exceptions.MenuNotFoundException;
 import com.orioninc.ProjectRestaurants.model.Menu;
 import com.orioninc.ProjectRestaurants.repository.MenuRepository;
@@ -12,64 +9,76 @@ import com.orioninc.ProjectRestaurants.service.MenuService;
 import lombok.AllArgsConstructor;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
+
+import static com.orioninc.ProjectRestaurants.enums.AppText.*;
 
 @AllArgsConstructor
 @Service
 public class MenuServiceImpl implements MenuService {
 
-    private final MenuRepository menuRepository;
-    private final MenuResponseDTOMapper menuResponseDTOMapper;
-    private final MenuRequestDTOMapper menuRequestDTOMapper;
+  private final MenuRepository menuRepository;
 
-    @Override
-    public List<MenuResponseDTO> getAllMenus() {
-
-        return menuRepository.findAll()
-                .stream()
-                .map(menuResponseDTOMapper)
-                .toList();
+  @Transactional(readOnly = true)
+  @Override
+  public List<MenuResponseDto> getAllMenus() {
+    List<Menu> menuList = menuRepository.findAll();
+    if (menuList.isEmpty()) {
+      throw new MenuNotFoundException(MENUS_EMPTY);
     }
+    return menuList.stream().map(MenuMapper.INSTANCE::menuToMenuResponseDto).toList();
+  }
 
-    @Override
-    public List<MenuResponseDTO> getAllMenusByRestaurant(Long id) {
-
-        return menuRepository.findAll()
-                .stream()
-                .filter((Menu menu) -> menu.getRestaurant().getId().equals(id))
-                .map(menuResponseDTOMapper)
-                .toList();
+  @Transactional(readOnly = true)
+  @Override
+  public List<MenuResponseDto> getAllMenusByRestaurant(Long id) {
+    Collection<Menu> menuList = menuRepository.findAllMenuByRestaurantId(id);
+    if (menuList.isEmpty()) {
+      throw new MenuNotFoundException(MENUS_EMPTY_BY_RESTAURANT, id);
     }
+    return menuList.stream().map(MenuMapper.INSTANCE::menuToMenuResponseDto).toList();
+  }
 
-    @Override
-    public MenuResponseDTO getMenuById(Long id) {
+  @Transactional(readOnly = true)
+  @Override
+  public MenuResponseDto getMenuById(Long id) {
+    return MenuMapper.INSTANCE.menuToMenuResponseDto(
+        menuRepository
+            .findById(id)
+            .orElseThrow(() -> new MenuNotFoundException(MENU_BY_ID_NOT_FOUND, id)));
+  }
 
-        return menuResponseDTOMapper.apply(menuRepository.findById(id).orElseThrow(() ->
-                new MenuNotFoundException("Menu not found.")));
-    }
+  @Transactional
+  @Override
+  public Menu saveMenu(MenuRequestDto menuRequestDTO) {
+    Menu menu = MenuMapper.INSTANCE.menuRequestDtoToMenu(menuRequestDTO);
+    return menuRepository.save(menu);
+  }
 
-    @Override
-    public Menu saveMenu(MenuRequestDTO menuRequestDTO) {
-        return menuRepository.save(menuRequestDTOMapper.apply(menuRequestDTO));
-    }
+  @Transactional(isolation = Isolation.READ_COMMITTED)
+  @Override
+  public MenuResponseDto updateMenu(MenuRequestDto menuRequestDTO) {
+    Menu menuToUpdate = MenuMapper.INSTANCE.menuRequestDtoToMenu(menuRequestDTO);
+    Menu existingMenu =
+        menuRepository
+            .findById(menuToUpdate.getId())
+            .orElseThrow(
+                () -> new MenuNotFoundException(MENU_BY_ID_NOT_FOUND, menuToUpdate.getId()));
 
-    @Override
-    public Menu updateMenu(MenuRequestDTO menuRequestDTO) {
-        Menu menuToUpdate = menuRequestDTOMapper.apply(menuRequestDTO);
-        Menu existingMenu = menuRepository.findById(menuToUpdate.getId())
-                .orElseThrow(() -> new MenuNotFoundException("Menu not found."));
+    existingMenu.setMenuName(menuToUpdate.getMenuName());
+    existingMenu.setRestaurant(menuToUpdate.getRestaurant());
+    existingMenu.setRestaurantName(menuToUpdate.getRestaurantName());
 
-        existingMenu.setMenuName(menuToUpdate.getMenuName());
-        existingMenu.setRestaurant(menuToUpdate.getRestaurant());
-        existingMenu.setRestaurantName(menuToUpdate.getRestaurantName());
+    return MenuMapper.INSTANCE.menuToMenuResponseDto(existingMenu);
+  }
 
-
-        return existingMenu;
-    }
-
-    @Override
-    public void deleteMenu(Long id) {
-        menuRepository.deleteById(id);
-    }
+  @Transactional
+  @Override
+  public void deleteMenu(Long id) {
+    menuRepository.deleteById(id);
+  }
 }

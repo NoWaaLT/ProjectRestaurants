@@ -3,6 +3,7 @@ package com.orioninc.ProjectRestaurants.controller;
 import com.orioninc.ProjectRestaurants.auth.MyUserDetailsService;
 import com.orioninc.ProjectRestaurants.auth.webtoken.JwtService;
 import com.orioninc.ProjectRestaurants.auth.webtoken.LoginForm;
+import com.orioninc.ProjectRestaurants.enums.AppText;
 import com.orioninc.ProjectRestaurants.exceptions.UserNotFoundException;
 import lombok.AllArgsConstructor;
 
@@ -36,7 +37,7 @@ public class HomeController {
       return jwtService.generateToken(
           myUserDetailsService.loadUserByUsername(loginForm.username()));
     } else {
-      throw new UserNotFoundException("User by this username not found.");
+      throw new UserNotFoundException(AppText.USER_BY_ID_NOT_FOUND, loginForm.username());
     }
   }
 }

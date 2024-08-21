@@ -1,13 +1,14 @@
 package com.orioninc.ProjectRestaurants.exceptions;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import com.orioninc.ProjectRestaurants.enums.AppText;
 
-@ResponseStatus(value = HttpStatus.NOT_FOUND)
-public class ExpireNotFoundException extends RuntimeException {
+public class ExpireNotFoundException extends NotFoundException {
 
-    public ExpireNotFoundException(String message) {
-        super(message);
+    public ExpireNotFoundException(AppText message) {
+        super(message.getDescription());
     }
 
+    public ExpireNotFoundException(AppText message, Long id) {
+        super(message.toString() + id);
+    }
 }

@@ -1,6 +1,6 @@
 package com.orioninc.ProjectRestaurants.service.implementation;
 
-import com.orioninc.ProjectRestaurants.DTO.user.*;
+import com.orioninc.ProjectRestaurants.dto.user.*;
 import com.orioninc.ProjectRestaurants.exceptions.UserNotFoundException;
 import com.orioninc.ProjectRestaurants.model.User;
 import com.orioninc.ProjectRestaurants.repository.UserRepository;
@@ -8,49 +8,56 @@ import com.orioninc.ProjectRestaurants.service.UserService;
 
 import lombok.AllArgsConstructor;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static com.orioninc.ProjectRestaurants.enums.AppText.USERS_EMPTY;
+import static com.orioninc.ProjectRestaurants.enums.AppText.USER_BY_ID_NOT_FOUND;
 
 @AllArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
 
   public final UserRepository userRepository;
-  public final UserRequestDTOMapper userRequestDTOMapper;
-  public final UserResponseDTOMapper userResponseDTOMapper;
-  public final UserUpdateDTOMapper userUpdateDTOMapper;
   private PasswordEncoder passwordEncoder;
 
+  @Transactional
   @Override
-  public User saveUser(UserRequestDTO userRequestDTO) {
+  public UserResponseDto saveUser(UserRequestDto userRequestDTO) {
     userRequestDTO.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
-    return userRepository.save(userRequestDTOMapper.apply(userRequestDTO));
+    userRepository.save(UserMapper.INSTANCE.userRequestDtoToUser(userRequestDTO));
+    return UserMapper.INSTANCE.userRequestDtoToUserResponseDto(userRequestDTO);
   }
 
+  @Transactional(isolation = Isolation.READ_COMMITTED)
   @Override
-  public User updateUser(UserUpdateDTO userUpdateDTO) {
-    User userToUpdate = userUpdateDTOMapper.apply(userUpdateDTO);
+  public UserResponseDto updateUser(UserUpdateDto userUpdateDTO) {
+    User userToUpdate = UserMapper.INSTANCE.userUpdateDtoToUser(userUpdateDTO);
 
     User existingUser =
         userRepository
             .findById(userUpdateDTO.id())
-            .orElseThrow(() -> new UserNotFoundException("User is not found."));
+            .orElseThrow(() -> new UserNotFoundException(USER_BY_ID_NOT_FOUND, userUpdateDTO.id()));
 
     existingUser.setId(userToUpdate.getId());
     existingUser.setUsername(userToUpdate.getUsername());
     existingUser.setPasswordHash(userToUpdate.getPasswordHash());
     existingUser.setRoles(userToUpdate.getRoles());
 
-    return existingUser;
+    return UserMapper.INSTANCE.userToUserResponseDto(existingUser);
   }
 
+  @Transactional(readOnly = true)
   @Override
-  public List<UserResponseDTO> getAllUsers() {
-    return userRepository.findAll().stream()
-            .map(userResponseDTOMapper)
-            .toList();
+  public List<UserResponseDto> getAllUsers() {
+    List<User> usersList = userRepository.findAll();
+    if (usersList.isEmpty()) {
+      throw new UserNotFoundException(USERS_EMPTY);
+    }
+    return usersList.stream().map(UserMapper.INSTANCE::userToUserResponseDto).toList();
   }
 }

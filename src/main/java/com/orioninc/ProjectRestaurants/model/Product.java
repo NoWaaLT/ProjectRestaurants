@@ -2,15 +2,12 @@ package com.orioninc.ProjectRestaurants.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.orioninc.ProjectRestaurants.repository.ProductRepository;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Comparator;
-import java.util.Objects;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -43,7 +40,7 @@ public class Product {
     private Float productMinimumBalance;
 
     @Column(name = "product_expirable")
-    private Integer productExpirable;
+    private Integer productExpiration;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)     // n+1

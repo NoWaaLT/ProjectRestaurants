@@ -1,12 +1,18 @@
 package com.orioninc.ProjectRestaurants.exceptions;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import com.orioninc.ProjectRestaurants.enums.AppText;
 
-@ResponseStatus(value = HttpStatus.NOT_FOUND)
-public class UserNotFoundException extends RuntimeException {
+public class UserNotFoundException extends NotFoundException {
 
-    public UserNotFoundException(String message) {
-        super(message);
+    public UserNotFoundException(AppText message, String username) {
+        super(message.toString() + username);
+    }
+
+    public UserNotFoundException(AppText message, Long id) {
+        super(message.toString() + id);
+    }
+
+    public UserNotFoundException(AppText message) {
+        super(message.toString());
     }
 }

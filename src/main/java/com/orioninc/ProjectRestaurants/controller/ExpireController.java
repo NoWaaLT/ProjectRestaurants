@@ -1,12 +1,14 @@
 package com.orioninc.ProjectRestaurants.controller;
 
-import com.orioninc.ProjectRestaurants.DTO.expire.ExpireRequestDTO;
-import com.orioninc.ProjectRestaurants.DTO.expire.ExpireRequestDTOMapper;
-import com.orioninc.ProjectRestaurants.DTO.expire.ExpireResponseDTO;
+import com.orioninc.ProjectRestaurants.dto.expire.ExpireRequestDto;
+import com.orioninc.ProjectRestaurants.dto.expire.ExpireResponseDto;
 
 import com.orioninc.ProjectRestaurants.model.Expire;
-import com.orioninc.ProjectRestaurants.service.ProductExpireService;
+import com.orioninc.ProjectRestaurants.service.ExpireService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,41 +19,41 @@ import java.util.List;
 @AllArgsConstructor
 public class ExpireController {
 
-    private final ProductExpireService productExpireService;
-    private final ExpireRequestDTOMapper expireRequestDTOMapper;
+    private final ExpireService expireService;
 
     @PreAuthorize("hasPermission(#id, 'Expire', 'read')")
     @GetMapping
-    public List<ExpireResponseDTO> getAllProductsExpire() {
-        return productExpireService.getAllProductExpires();
+    public ResponseEntity<List<ExpireResponseDto>> getAllProductsExpire() {
+        return new ResponseEntity<>(expireService.getAllProductExpires(), HttpStatus.OK);
     }
 
     @PreAuthorize("hasPermission(#id, 'Expire', 'read')")
     @GetMapping(value = "/{id}")
-    public ExpireResponseDTO getProductExpireById(@PathVariable Long id) {
-        return productExpireService.getProductExpireById(id);
+    public ResponseEntity<ExpireResponseDto> getProductExpireById(@PathVariable Long id) {
+        return new ResponseEntity<>(expireService.getProductExpireById(id), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#id, 'Expire', 'create')")
-    @PostMapping
-    public Expire saveProductExpire(@RequestBody ExpireRequestDTO expireRequestDTO) {
-        Expire expire = expireRequestDTOMapper.apply(expireRequestDTO);
-
-        return productExpireService.saveProductExpire(expire);
-    }
-
-    // TODO consider to make id by id in URI
+//    // TODO Save
+//
+//    @PreAuthorize("hasPermission(#id, 'Expire', 'create')")
+//    @PostMapping
+//    public Expire saveProductExpire(@Valid @RequestBody ExpireRequestDTO expireRequestDTO) {
+//        Expire expire = ExpireMapper.INSTANCE.expireResponseDtoToExpire(expireRequestDTO);
+//
+//        return expireService.saveProductExpire(expire);
+//    }
 
     @PreAuthorize("hasPermission(#id, 'Expire', 'update')")
     @PutMapping(value = "products/expire/")
-    public Expire updateProductExpire(@RequestBody ExpireRequestDTO expireRequestDTO) {
-        return productExpireService.updateProductExpire(expireRequestDTO);
+    public ResponseEntity<Expire> updateProductExpire(@Valid @RequestBody ExpireRequestDto expireRequestDTO) {
+        return new ResponseEntity<>(expireService.updateProductExpire(expireRequestDTO), HttpStatus.OK);
     }
 
     @PreAuthorize("hasPermission(#id, 'Expire', 'delete')")
     @DeleteMapping(value = "/{id}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT, reason = "Deleted successfully!")
     public void deleteProductExpire(@PathVariable Long id) {
-        productExpireService.deleteProductExpire(id);
+        expireService.deleteProductExpire(id);
     }
 
 }

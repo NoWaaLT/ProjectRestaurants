@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import static com.orioninc.ProjectRestaurants.enums.AppText.USER_BY_USERNAME_NOT_FOUND;
+
 @Service
 public class MyUserDetailsService implements UserDetailsService {
 
@@ -25,6 +27,6 @@ public class MyUserDetailsService implements UserDetailsService {
     ThreadContext.put("id", username);
 
     return user.map(MyUserDetails::new)
-        .orElseThrow(() -> new UserNotFoundException("User is not found"));
+        .orElseThrow(() -> new UserNotFoundException(USER_BY_USERNAME_NOT_FOUND, username));
   }
 }

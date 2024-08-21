@@ -1,25 +1,24 @@
 package com.orioninc.ProjectRestaurants.service.implementation;
 
+import com.orioninc.ProjectRestaurants.dto.product.*;
+import com.orioninc.ProjectRestaurants.model.Product;
 import com.orioninc.ProjectRestaurants.model.warehouse.WarehouseProduct;
 
+import com.orioninc.ProjectRestaurants.repository.ProductRepository;
 import com.orioninc.ProjectRestaurants.service.WarehouseProductsService;
-import jakarta.persistence.criteria.Root;
+
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Locale;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -27,75 +26,67 @@ import java.util.Map;
 public class WarehouseProductsServiceImpl implements WarehouseProductsService {
 
   private final WebClient webClient;
+  private final ProductRepository productRepository;
+  private final ProductWhDtoMapper productWhDTOMapper;
+  private final ExpireServiceImpl expireService;
 
   WebClient.Builder webClientBuilder = WebClient.builder();
+  private final ProductMapper productMapper;
 
-//  private static final Logger logger = LogManager.getLogger(WarehouseProductsServiceImpl.class);
+  @Override
+  @Transactional
+  public Product saveProductFromWarehouse(ProductWhDto productWhDTO) {
+    Optional<Product> existingProductOptional =
+        productRepository.findProductByProductNameAndRestaurantId(
+            productWhDTO.productName(), productWhDTO.restaurant());
 
-//  private static Mono<String> testMono() {
-//    return Mono.just("Hello reactive").log();
-//  }
+    if (existingProductOptional.isPresent()) {
+      Product existingProduct = existingProductOptional.get();
+      Product productToUpdate = productWhDTOMapper.apply(productWhDTO);
+      existingProduct.setProductBalance(
+          existingProduct.getProductBalance() + productToUpdate.getProductBalance());
 
-//  private static Flux<String> testFlux() {
-//
-//    //        return Flux.just("a", "v", "s")
-//    //                .log();
-//
-//    Collection<String> listOfNothing = new ArrayList<>();
-//    listOfNothing.add("1");
-//    listOfNothing.add("3");
-//    listOfNothing.add("2");
-//
-//    return Flux.fromIterable(listOfNothing).log();
-//  }
+      float newProductPrice =
+          calculateAveragePrice(
+              existingProduct.getProductPrice(),
+              existingProduct.getProductBalance(),
+              productToUpdate.getProductPrice(),
+              productToUpdate.getProductBalance());
+      existingProduct.setProductPrice(newProductPrice); // Average of prices/balances
 
-//  private static Flux<String> testMap() {
-//    Collection<String> listOfNothing = new ArrayList<>();
-//    listOfNothing.add("1abc");
-//    listOfNothing.add("3Sds");
-//    listOfNothing.add("2Sds");
-//
-//    Flux<String> flux = Flux.fromIterable(listOfNothing);
-//
-//    return flux.map(String::toUpperCase);
-//  }
+      productRepository.save(existingProduct);
 
-//  private static Flux<String> testFlatMap() {
-//    Collection<String> listOfNothing = new ArrayList<>();
-//    listOfNothing.add("1abc");
-//    listOfNothing.add("3Sds");
-//    listOfNothing.add("2Sds");
-//
-//    Flux<String> flux = Flux.fromIterable(listOfNothing);
-//
-//    return flux.flatMap(data -> Mono.just(data.toUpperCase(Locale.ROOT)));
-//  }
+        expireService.saveExpire(
+            existingProduct, productToUpdate.getProductBalance()); // Create expire record in table
 
-//  private static
-//  Mono <Map<Integer, Integer>> testColectMap() {
-//    Flux<Integer> flux = Flux.just(1, 2, 3 ,4 ,5 ,6 ,7 ,8);
-//    return flux.collectMap(data -> data, data -> data * data);
-//  }
-//
-//  @Scheduled(cron = "*/15 * * * * *")
-//  private void justTest() {
-//    testColectMap().subscribe(logger::info);
-//  }
+      return existingProduct;
 
-//  private static Flux<String> testSkip() {
-//    Flux<String> flux = Flux.just("abc", "efg", "gjk", "uiu");
-//    flux.collectList()
-//    return flux.delayElements(Duration.ofSeconds(5)); // how much skips
-//  }
+    } else {
+      return productMapper.productAddDtoToProduct(
+          new ProductAddDto(
+              productWhDTO.productName(),
+              productWhDTO.productPrice(),
+              productWhDTO.productBalance(),
+              productWhDTO.restaurant(),
+              productWhDTO.productBalance(), // Setting minimum balance to current balance
+              productWhDTO.productExpiration()));
+    }
+  }
 
-  //    @Scheduled(cron = "*/5 * * * * *")
-  //    public WarehouseProduct getWarehouseProduct() throws JsonProcessingException {
-  //
-  //        return new ObjectMapper().readValue(webClientBuilder.build()
-  //                .get()
-  //                .uri("http://10.1.11.26:8080/api/v1/products/get/1")
-  //                .retrieve().bodyToMono((String.class)).block(), WarehouseProduct.class);
-  //    }
+  @Override
+  @Transactional
+  public List<ProductWhDto> saveProductsFromWarehouse(List<ProductWhDto> productsListWhDTO) {
+    productsListWhDTO.forEach(this::saveProductFromWarehouse);
+    return productsListWhDTO;
+  }
+
+  @Override
+  public float calculateAveragePrice(
+      float oldPrice, float oldBalance, float currentPrice, float addition) {
+    float avgPrice = (oldBalance * oldPrice + addition * currentPrice) / (oldBalance + addition);
+    BigDecimal roundedAvgPrice = BigDecimal.valueOf(avgPrice).setScale(2, RoundingMode.DOWN);
+    return roundedAvgPrice.floatValue();
+  }
 
   public Mono<WarehouseProduct> getWarehouseProduct() {
     return webClient

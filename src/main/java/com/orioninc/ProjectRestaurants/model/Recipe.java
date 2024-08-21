@@ -34,5 +34,3 @@ public class Recipe {
     @Column(name = "quantity")
     private Integer quantity;
 }
-
-// TODO leverage entities by spec. attributes

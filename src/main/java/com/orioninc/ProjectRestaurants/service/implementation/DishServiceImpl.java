@@ -1,73 +1,93 @@
 package com.orioninc.ProjectRestaurants.service.implementation;
 
-import com.orioninc.ProjectRestaurants.DTO.dish.DishDTO;
-import com.orioninc.ProjectRestaurants.DTO.dish.DishRequestDTOMapper;
-import com.orioninc.ProjectRestaurants.DTO.dish.DishResponseDTOMapper;
+import com.orioninc.ProjectRestaurants.dto.dish.DishDto;
+import com.orioninc.ProjectRestaurants.dto.dish.DishMapper;
 import com.orioninc.ProjectRestaurants.exceptions.DishNotFoundException;
+import com.orioninc.ProjectRestaurants.exceptions.MenuNotFoundException;
 import com.orioninc.ProjectRestaurants.model.Dish;
 import com.orioninc.ProjectRestaurants.repository.DishRepository;
+import com.orioninc.ProjectRestaurants.repository.MenuRepository;
 import com.orioninc.ProjectRestaurants.service.DishService;
 
 import lombok.AllArgsConstructor;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static com.orioninc.ProjectRestaurants.enums.AppText.*;
 
 @Service
 @AllArgsConstructor
 public class DishServiceImpl implements DishService {
 
-    private final DishRepository dishRepository;
-    private final DishResponseDTOMapper dishResponseDTOMapper;
-    private final DishRequestDTOMapper dishRequestDTOMapper;
+  private final DishRepository dishRepository;
+  private final MenuRepository menuRepository;
 
-    @Override
-    public List<DishDTO> getAllDishes() {
-        return dishRepository.findAll()
-                .stream()
-                .map(dishResponseDTOMapper)
-                .collect(Collectors.toList());
+  @Transactional(readOnly = true)
+  @Override
+  public List<DishDto> getAllDishes() {
+    return dishRepository.findAll().stream().map(DishMapper.INSTANCE::dishToDishDto).toList();
+  }
+
+  @Transactional(readOnly = true)
+  @Override
+  public List<DishDto> getAllDishesByMenuId(Long id) {
+    boolean menuExists = menuRepository.existsById(id);
+
+    if (!menuExists) {
+      throw new MenuNotFoundException(MENU_BY_ID_NOT_FOUND, id);
     }
 
-    @Override
-    public List<DishDTO> getAllDishesByMenuId(Long id) {
-        return dishRepository.findAll()
-                .stream()
-                .filter((Dish dish) -> dish.getMenu().getId().equals(id))
-                .map(dishResponseDTOMapper)
-                .collect(Collectors.toList());
+    Collection<Dish> dishList = dishRepository.findAllByMenuId(id);
+
+    if (dishList.isEmpty()) {
+      throw new DishNotFoundException(DISH_BY_MENU_ID_NOT_FOUND, id);
     }
 
-    @Override
-    public Dish getDishById(Long id) {
-        return dishRepository.findById(id).orElseThrow(() ->
-                new DishNotFoundException("Dish is not found"));
-    }
+    return dishList.stream().map(DishMapper.INSTANCE::dishToDishDto).toList();
+  }
 
-    @Override
-    public Dish saveDish(DishDTO dishDTO) {
-        return dishRepository.save(dishRequestDTOMapper.apply(dishDTO));
-    }
+  @Transactional(readOnly = true)
+  @Override
+  public DishDto getDishById(Long id) {
+    return dishRepository
+        .findById(id).map(DishMapper.INSTANCE::dishToDishDto)
+        .orElseThrow(() -> new DishNotFoundException(DISH_BY_ID_NOT_FOUND, id));
+  }
 
-    @Override
-    public Dish updateDish(DishDTO dishDTO) {
-        Dish dishToUpdate = dishRequestDTOMapper.apply(dishDTO);
+  @Transactional
+  @Override
+  public DishDto saveDish(DishDto dishDTO) {
+    dishRepository.save(DishMapper.INSTANCE.dishDtoToDish(dishDTO));
+    return dishDTO;
+  }
 
-        Dish existingDish = dishRepository.findById(dishToUpdate.getId()).orElseThrow(() ->
-                new DishNotFoundException("Dish not found"));
+  @Transactional(isolation = Isolation.READ_COMMITTED)
+  @Override
+  public Dish updateDish(DishDto dishDTO) {
+    Dish dishToUpdate = DishMapper.INSTANCE.dishDtoToDish(dishDTO);
 
-        existingDish.setId(dishToUpdate.getId());
-        existingDish.setDishName(dishToUpdate.getDishName());
-        existingDish.setDishPrice(dishToUpdate.getDishPrice());
-        existingDish.setMenu(dishToUpdate.getMenu());
+    Dish existingDish =
+        dishRepository
+            .findById(dishToUpdate.getId())
+            .orElseThrow(
+                () -> new DishNotFoundException(DISH_BY_ID_NOT_FOUND, dishToUpdate.getId()));
 
-        return existingDish;
-    }
+    existingDish.setId(dishToUpdate.getId());
+    existingDish.setDishName(dishToUpdate.getDishName());
+    existingDish.setDishPrice(dishToUpdate.getDishPrice());
+    existingDish.setMenu(dishToUpdate.getMenu());
 
-    @Override
-    public void deleteDish(Long id) {
-        dishRepository.deleteById(id);
-    }
+    return existingDish;
+  }
+
+  @Override
+  @Transactional
+  public void deleteDish(Long id) {
+    dishRepository.deleteById(id);
+  }
 }

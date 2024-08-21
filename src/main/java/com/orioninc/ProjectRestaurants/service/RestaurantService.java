@@ -1,15 +1,15 @@
 package com.orioninc.ProjectRestaurants.service;
 
-import com.orioninc.ProjectRestaurants.DTO.restaurant.RestaurantDTO;
+import com.orioninc.ProjectRestaurants.dto.restaurant.RestaurantDto;
 import com.orioninc.ProjectRestaurants.model.Restaurant;
 
 import java.util.List;
 
 public interface RestaurantService {
 
-    List<RestaurantDTO> getAllRestaurants();
-    RestaurantDTO getRestaurantById(Long id);
-    Restaurant saveRestaurant(RestaurantDTO restaurantDTO);
-    Restaurant updateRestaurant(RestaurantDTO restaurantDTO);
+    List<RestaurantDto> getAllRestaurants();
+    RestaurantDto getRestaurantById(Long id);
+    Restaurant saveRestaurant(RestaurantDto restaurantDTO);
+    Restaurant updateRestaurant(RestaurantDto restaurantDTO);
     void deleteRestaurant(Long id);
 }

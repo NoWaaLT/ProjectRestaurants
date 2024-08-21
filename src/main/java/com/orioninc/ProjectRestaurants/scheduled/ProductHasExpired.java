@@ -1,9 +1,8 @@
 package com.orioninc.ProjectRestaurants.scheduled;
 
-import com.orioninc.ProjectRestaurants.DTO.expire.ExpireResponseDTO;
-import com.orioninc.ProjectRestaurants.service.ProductExpireService;
+import com.orioninc.ProjectRestaurants.dto.expire.ExpireResponseDto;
+import com.orioninc.ProjectRestaurants.service.ExpireService;
 import lombok.AllArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
@@ -14,9 +13,9 @@ import java.util.List;
 @AllArgsConstructor
 public class ProductHasExpired {
 
-  private final ProductExpireService productExpireService;
+  private final ExpireService expireService;
 
-  public String removeExpiredProducts(List<ExpireResponseDTO> expiredProductsList) {
+  public String removeExpiredProducts(List<ExpireResponseDto> expiredProductsList) {
     if (!expiredProductsList.isEmpty()) {
 //      expiredProductsList.forEach();
       return "Products removed";

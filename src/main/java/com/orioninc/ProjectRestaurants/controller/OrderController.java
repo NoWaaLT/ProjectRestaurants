@@ -1,20 +1,20 @@
 package com.orioninc.ProjectRestaurants.controller;
 
-import com.orioninc.ProjectRestaurants.DTO.order.OrderDTO;
-import com.orioninc.ProjectRestaurants.DTO.order.OrderResponseDTO;
+import com.orioninc.ProjectRestaurants.dto.order.OrderResponseDto;
 import com.orioninc.ProjectRestaurants.model.Order;
 import com.orioninc.ProjectRestaurants.service.OrderService;
+
 import lombok.AllArgsConstructor;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -25,25 +25,20 @@ public class OrderController {
 
   @PreAuthorize("hasPermission(#id, 'Order', 'read')")
   @GetMapping(value = "/my-orders")
-  public String getOrderByUser() {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    Optional<Order> orderOptional = orderService.getOrderByUser(authentication.getName());
-
-    return orderOptional
-        .map(order -> "Your order: " + order.getOrderName())
-        .orElse("You don't have any orders.");
+  public ResponseEntity<Order> getOrderByUser() {
+    return new ResponseEntity<>(orderService.getOrderByUserUsername(), HttpStatus.OK);
   }
 
   @PreAuthorize("hasPermission(#id, 'Order', 'read')")
   @GetMapping
-  public List<OrderResponseDTO> getAllOrders() {
-    return orderService.getAllOrders();
+  public ResponseEntity<List<OrderResponseDto>> getAllOrders() {
+    return new ResponseEntity<>(orderService.getAllOrders(), HttpStatus.OK);
   }
 
   @PreAuthorize("hasPermission(#id, 'Order', 'read')")
   @GetMapping(value = "/restaurant-{id}")
-  public List<OrderResponseDTO> getAllOrdersByRestaurant(@PathVariable Long id) {
-    return orderService.getAllOrdersByRestaurant(id);
+  public ResponseEntity<List<OrderResponseDto>> getAllOrdersByRestaurant(@PathVariable Long id) {
+    return new ResponseEntity<>(orderService.getAllOrdersByRestaurant(id), HttpStatus.OK);
   }
 
   // TODO save order for user

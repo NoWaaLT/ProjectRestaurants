@@ -1,13 +1,18 @@
 package com.orioninc.ProjectRestaurants.exceptions;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import com.orioninc.ProjectRestaurants.enums.AppText;
 
-@ResponseStatus(value = HttpStatus.NOT_FOUND)
-public class ProductNotFoundException extends RuntimeException {
+public class ProductNotFoundException extends NotFoundException {
 
-    public ProductNotFoundException(String message) {
-        super(message);
-    }
+  public ProductNotFoundException(AppText message, Long id) {
+    super(message.toString() + id);
+  }
 
+  public ProductNotFoundException(AppText message, String productName, Long restaurantId) {
+    super(message.toString() + productName + " and restaurant id: " + restaurantId);
+  }
+
+  public ProductNotFoundException(AppText message, String username) {
+    super(message.toString() + username);
+  }
 }

@@ -1,160 +1,171 @@
 package com.orioninc.ProjectRestaurants.service.implementation;
 
-import com.orioninc.ProjectRestaurants.DTO.product.*;
+import com.orioninc.ProjectRestaurants.dto.expire.ExpireResponseDto;
+import com.orioninc.ProjectRestaurants.dto.product.*;
 import com.orioninc.ProjectRestaurants.exceptions.ProductNotFoundException;
+import com.orioninc.ProjectRestaurants.exceptions.RestaurantNotFoundException;
 import com.orioninc.ProjectRestaurants.model.Product;
-import com.orioninc.ProjectRestaurants.model.Expire;
+import com.orioninc.ProjectRestaurants.model.Restaurant;
 import com.orioninc.ProjectRestaurants.repository.ProductRepository;
 import com.orioninc.ProjectRestaurants.repository.RestaurantRepository;
-import com.orioninc.ProjectRestaurants.service.ProductExpireService;
+import com.orioninc.ProjectRestaurants.service.ExpireService;
 import com.orioninc.ProjectRestaurants.service.ProductService;
-import com.querydsl.core.types.dsl.BooleanExpression;
 
-import com.orioninc.ProjectRestaurants.utils.ExpireDateUtil;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
-
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
-@AllArgsConstructor
+import static com.orioninc.ProjectRestaurants.enums.AppText.PRODUCT_BY_ID_NOT_FOUND;
+import static com.orioninc.ProjectRestaurants.enums.AppText.PRODUCT_IN_RESTAURANT_BY_ID_NOT_FOUND;
+import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
+
 @Service
-@Slf4j
 public class ProductServiceImpl implements ProductService {
 
-    private final ProductRepository productRepository;
-    private final ProductResponseDTOMapper productResponseDTOMapper;
-    private final ProductRequestDTOMapper productRequestDTOMapper;
-    private final ProductExpireService productExpireService;
-    private final ProductWhDTOMapper productWhDTOMapper;
-    private final RestaurantRepository restaurantRepository;
+  private final ProductRepository productRepository;
+  private final RestaurantRepository restaurantRepository;
+  private final ExpireService expireService;
+  private final ProductServiceImpl productService;
 
-    @Override
-    public List<ProductDTO> getAllProductByRestaurant(Long type) {
+  @Autowired
+  public ProductServiceImpl(
+      ProductRepository productRepository,
+      RestaurantRepository restaurantRepository,
+      ExpireService expireService,
+      @Lazy ProductServiceImpl productService) {
+    this.productRepository = productRepository;
+    this.restaurantRepository = restaurantRepository;
+    this.expireService = expireService;
+    this.productService = productService;
+  }
 
-        return productRepository.findAll()
-                .stream()
-                .filter((Product product) -> Objects.equals(product.getRestaurant().getId(), type))
-                .map(productResponseDTOMapper)
-                .collect(Collectors.toList());
+  @Transactional(readOnly = true)
+  @Override
+  public List<ProductDto> getAllProductByRestaurantId(Long restaurantId) { // O
+    Collection<Product> productList = productRepository.findAllByRestaurantId(restaurantId);
+    if (productList.isEmpty()) {
+      throw new ProductNotFoundException(PRODUCT_IN_RESTAURANT_BY_ID_NOT_FOUND, restaurantId);
     }
 
-    @Override
-    public ProductDTO getProductById(Long id) {
-        return productResponseDTOMapper.apply(productRepository.findById(id).orElseThrow(()
-                -> new ProductNotFoundException("Product is not found")));
+    return productList.stream().map(ProductMapper.INSTANCE::productToProductDto).toList();
+  }
+
+  @Transactional(readOnly = true)
+  @Override
+  public ProductDto getProductById(Long id) { // O
+    return productRepository
+        .findById(id)
+        .map(ProductMapper.INSTANCE::productToProductDto)
+        .orElseThrow(() -> new ProductNotFoundException(PRODUCT_BY_ID_NOT_FOUND, id));
+  }
+
+  @Transactional
+  @Override
+  public ProductDto saveProduct(ProductAddDto productAddDTO) { // O
+    Product product = ProductMapper.INSTANCE.productAddDtoToProduct(productAddDTO);
+
+    Restaurant restaurant =
+        restaurantRepository
+            .findById(product.getRestaurant().getId())
+            .orElseThrow(
+                () ->
+                    new RestaurantNotFoundException(
+                        PRODUCT_IN_RESTAURANT_BY_ID_NOT_FOUND, productAddDTO.restaurant()));
+
+    product.setRestaurant(restaurant);
+    Product savedProduct = productRepository.save(product);
+
+    if (product.getProductExpiration() > 0) {
+      expireService.saveExpire(savedProduct, savedProduct.getProductBalance());
     }
 
+    return ProductMapper.INSTANCE.productToProductDto(savedProduct);
+  }
 
-    @Override
-    public Product saveProduct(ProductDTO productDTO) {
+  @Override
+  @Transactional
+  public List<ProductAddDto> saveProducts(List<ProductAddDto> productAddDtoList) {
+    productAddDtoList.forEach(productService::saveProduct);
+    return productAddDtoList;
+  }
 
-        Product product = productRequestDTOMapper.apply(productDTO);
-        Product savedProduct = productRepository.save(product);
+  @Override
+  @Transactional(isolation = Isolation.READ_COMMITTED)
+  public Product updateProduct(ProductDto productDTO) {
+    Product productToUpdate = ProductMapper.INSTANCE.productDtoToProduct(productDTO);
 
-        if (product.getProductExpirable() > 0) {
-            Expire expire = new Expire();
-            expire.setProduct(savedProduct);
+    Product existingProduct =
+        productRepository
+            .findById(productToUpdate.getId())
+            .orElseThrow(
+                () ->
+                    new ProductNotFoundException(PRODUCT_BY_ID_NOT_FOUND, productToUpdate.getId()));
 
-            Date newDate = ExpireDateUtil.expirationDate(product.getProductExpirable());
-            expire.setExpireDate(newDate);
+    //    existingProduct.setProductName(productToUpdate.getProductName());
+    //    existingProduct.setProductPrice(productToUpdate.getProductPrice());
+    //
+    //    if (!productToUpdate.getProductBalance().equals(existingProduct.getProductBalance())
+    //        && productToUpdate.getProductBalance() < existingProduct.getProductBalance()) {
+    //
+    //      Optional<List<ExpireResponseDTO>> expireList =
+    //          productExpireService.findExpiresByProductId(productDTO.id());
+    //
+    //      if (expireList.isPresent()) {
+    //        float balance = existingProduct.getProductBalance() -
+    // productToUpdate.getProductBalance();
+    //        List<ExpireResponseDTO> listOfExpires = expireList.get();
+    //        while (balance > 0) {
+    //          Long expireDateId = findOldestDate(listOfExpires);
+    //
+    //          float quantityInBatch =
+    //              productExpireService
+    //                  .getProductExpireById(expireDateId)
+    //                  .batchQuantity(); // Get the quantity in batch
+    //
+    //          if (balance < quantityInBatch) {
+    //            quantityInBatch -= balance;
+    //            balance = 0;
+    //            expireRepositoryImpl.editExpireData(quantityInBatch, false, expireDateId);
+    //          } else if (balance == quantityInBatch) {
+    //            quantityInBatch = 0;
+    //            balance = 0;
+    //            expireRepositoryImpl.editExpireData(quantityInBatch, true, expireDateId);
+    //          } else {
+    //            balance -= quantityInBatch;
+    //            quantityInBatch = 0;
+    //            expireRepositoryImpl.editExpireData(quantityInBatch, true, expireDateId);
+    //          }
+    //        }
+    //      }
+    //    }
+    //
+    //    existingProduct.setProductBalance(productToUpdate.getProductBalance());
+    //    existingProduct.setRestaurant(productToUpdate.getRestaurant());
 
-            expire.setBatchQuantity(product.getProductBalance());
+    return productRepository.save(existingProduct);
+  }
 
-            productExpireService.saveProductExpire(expire);
-        }
+  @Transactional
+  @Override
+  public void deleteProduct(Long id) {
+    productRepository.deleteById(id);
+  }
 
-        return savedProduct;
+  @Override
+  public Long findOldestDate(List<ExpireResponseDto> listOfExpires) {
+    Date date = new Date();
+    Long oldestExpireId = 0L;
+    for (ExpireResponseDto expireResponseDTO : listOfExpires) {
+      if (date.after(expireResponseDTO.expireDate()) && !expireResponseDTO.removedProduct()) {
+        date = expireResponseDTO.expireDate();
+        oldestExpireId = expireResponseDTO.id();
+      }
     }
 
-    @Override
-    public List<ProductDTO> saveProducts(List<ProductDTO> productDTOList) {  // TODO Returns id: null on response in JSON, db add record as required
-        for (ProductDTO pro : productDTOList) {
-            saveProduct(pro);
-        }
-
-        return productDTOList;
-    }
-
-    @Override
-    @Transactional
-    public Product saveProductFromWarehouse(ProductWhDTO productWhDTO) {
-
-        Product productToUpdate = productWhDTOMapper.apply(productWhDTO);
-
-        String productName = productToUpdate.getProductName();
-        Long restaurantId = productToUpdate.getRestaurant().getId();
-
-        Optional<Product> existingProductOptional =
-                productRepository.findProductByNameAndRestaurant(productName, restaurantId);
-
-        if (existingProductOptional.isPresent()) {
-            Product existingProduct = existingProductOptional.get();
-            existingProduct.setProductBalance(existingProduct.getProductBalance() +
-                    productToUpdate.getProductBalance()
-            );
-            existingProduct.setProductPrice(productWhDTO.productPrice()); // Can be adjusted if necessary
-            productRepository.save(existingProduct);
-            checkProductEXP(existingProduct, productToUpdate);
-
-            return existingProduct;
-        } else {
-            ProductDTO unlistedProduct = new ProductDTO(
-                    null,
-                    productWhDTO.productName(),
-                    productWhDTO.productPrice(),
-                    productWhDTO.productBalance(),
-                    productWhDTO.restaurant(),
-                    productWhDTO.productBalance(),      // Consider change in future
-                    productWhDTO.productExpirable()
-            );
-
-            return saveProduct(unlistedProduct);
-        }
-    }
-
-    @Override
-    public void checkProductEXP(Product product, Product productBatch) {
-        if (product.getProductExpirable() > 0) {
-            Expire expire = new Expire();
-            expire.setProduct(product);
-
-            Date newDate = ExpireDateUtil.expirationDate(product.getProductExpirable());
-            expire.setExpireDate(newDate);
-
-            expire.setBatchQuantity(productBatch.getProductBalance());
-
-            productExpireService.saveProductExpire(expire);
-        }
-    }
-
-    @Override
-    public Product updateProduct(ProductDTO productDTO) {
-        Product productToUpdate = productRequestDTOMapper.apply(productDTO);
-        Product existingProduct = productRepository.findById(productToUpdate.getId())
-                .orElseThrow(() -> new ProductNotFoundException("Product not found."));
-
-        existingProduct.setProductName(productToUpdate.getProductName());
-        existingProduct.setProductPrice(productToUpdate.getProductPrice());
-        existingProduct.setProductBalance(productToUpdate.getProductBalance());
-        existingProduct.setRestaurant(productToUpdate.getRestaurant());
-
-        return productRepository.save(existingProduct);
-    }
-
-    @Override
-    public void deleteProduct(Long id) {
-        productRepository.deleteById(id);
-    }
-
-//    public List<Product> findProductsByCondition(String name) {
-//        QProduct qProduct = QProduct.product;
-//        BooleanExpression filterByName = qProduct.name.eq(name);
-//        return (List<Product>) productRepository.findAll(filterByName);
-//    }
-
+    return oldestExpireId;
+  }
 }

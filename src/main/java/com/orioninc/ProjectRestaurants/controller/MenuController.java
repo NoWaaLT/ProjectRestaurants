@@ -1,13 +1,14 @@
 package com.orioninc.ProjectRestaurants.controller;
 
-import com.orioninc.ProjectRestaurants.DTO.menu.MenuResponseDTO;
-import com.orioninc.ProjectRestaurants.DTO.menu.MenuResponseDTOMapper;
-import com.orioninc.ProjectRestaurants.DTO.menu.MenuRequestDTO;
+import com.orioninc.ProjectRestaurants.dto.menu.MenuRequestDto;
+import com.orioninc.ProjectRestaurants.dto.menu.MenuResponseDto;
 import com.orioninc.ProjectRestaurants.model.Menu;
 import com.orioninc.ProjectRestaurants.service.MenuService;
 
 import lombok.AllArgsConstructor;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,42 +20,40 @@ import java.util.List;
 public class MenuController {
 
   private final MenuService menuService;
-  private final MenuResponseDTOMapper menuResponseDTOMapper;
 
   @PreAuthorize("hasPermission(#id, 'Menu', 'read')")
   @GetMapping
-  public List<MenuResponseDTO> getAllMenus() {
-    return menuService.getAllMenus();
+  public ResponseEntity<List<MenuResponseDto>> getAllMenus() {
+    return new ResponseEntity<>(menuService.getAllMenus(), HttpStatus.OK);
   }
 
   @PreAuthorize("hasPermission(#id, 'Menu', 'read')")
   @GetMapping(value = "/restaurant-{id}")
-  public List<MenuResponseDTO> getAllMenusByRestaurant(@PathVariable Long id) {
-    return menuService.getAllMenusByRestaurant(id);
+  public ResponseEntity<List<MenuResponseDto>> getAllMenusByRestaurant(@PathVariable Long id) {
+    return new ResponseEntity<>(menuService.getAllMenusByRestaurant(id), HttpStatus.OK);
   }
 
   @PreAuthorize("hasPermission(#id, 'Menu', 'read')")
   @GetMapping(value = "/{id}")
-  public MenuResponseDTO getMenuById(@PathVariable Long id) {
-    return menuService.getMenuById(id);
+  public ResponseEntity<MenuResponseDto> getMenuById(@PathVariable Long id) {
+    return new ResponseEntity<>(menuService.getMenuById(id), HttpStatus.OK);
   }
 
   @PreAuthorize("hasPermission(#id, 'Menu', 'create')")
   @PostMapping
-  public Menu saveMenu(@RequestBody MenuRequestDTO menuRequestDTO) {
-    return menuService.saveMenu(menuRequestDTO);
+  public ResponseEntity<Menu> saveMenu(@RequestBody MenuRequestDto menuRequestDTO) {
+    return new ResponseEntity<>(menuService.saveMenu(menuRequestDTO), HttpStatus.CREATED);
   }
-
-  // TODO make id in path
 
   @PreAuthorize("hasPermission(#id, 'Menu', 'update')")
   @PutMapping(value = "/menus/update")
-  public MenuResponseDTO updateMenu(@RequestBody MenuRequestDTO menuRequestDTO) {
-    return menuResponseDTOMapper.apply(menuService.updateMenu(menuRequestDTO));
+  public ResponseEntity<MenuResponseDto> updateMenu(@RequestBody MenuRequestDto menuRequestDTO) {
+    return new ResponseEntity<>(menuService.updateMenu(menuRequestDTO), HttpStatus.OK);
   }
 
   @PreAuthorize("hasPermission(#id, 'Menu', 'delete')")
   @DeleteMapping(value = "/{id}")
+  @ResponseStatus(value = HttpStatus.NO_CONTENT, reason = "Deleted succesfully!")
   public void deleteMenu(@PathVariable Long id) {
     menuService.deleteMenu(id);
   }

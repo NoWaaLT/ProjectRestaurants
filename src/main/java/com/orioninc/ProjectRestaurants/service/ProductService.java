@@ -1,19 +1,24 @@
 package com.orioninc.ProjectRestaurants.service;
 
-import com.orioninc.ProjectRestaurants.DTO.product.ProductDTO;
-import com.orioninc.ProjectRestaurants.DTO.product.ProductWhDTO;
+import com.orioninc.ProjectRestaurants.dto.expire.ExpireResponseDto;
+import com.orioninc.ProjectRestaurants.dto.product.ProductAddDto;
+import com.orioninc.ProjectRestaurants.dto.product.ProductDto;
 import com.orioninc.ProjectRestaurants.model.Product;
 
 import java.util.List;
 
 public interface ProductService {
-    List<ProductDTO> getAllProductByRestaurant(Long id);
-    ProductDTO getProductById(Long id);
-    Product saveProduct(ProductDTO productDTO);
-    Product saveProductFromWarehouse(ProductWhDTO productWhDTO);
-    Product updateProduct(ProductDTO productDTO);
-    List<ProductDTO> saveProducts(List<ProductDTO> productDTOList);
-    void deleteProduct(Long id);
-    void checkProductEXP(Product existingProduct, Product productBatch);
+  List<ProductDto> getAllProductByRestaurantId(Long id);
 
+  ProductDto getProductById(Long id);
+
+  ProductDto saveProduct(ProductAddDto productAddDTO);
+
+  Product updateProduct(ProductDto productDTO);
+
+  List<ProductAddDto> saveProducts(List<ProductAddDto> productAddDtoList);
+
+  void deleteProduct(Long id);
+
+  Long findOldestDate(List<ExpireResponseDto> listOfExpires);
 }

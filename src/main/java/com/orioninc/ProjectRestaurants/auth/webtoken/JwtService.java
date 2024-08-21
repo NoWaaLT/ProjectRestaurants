@@ -59,7 +59,7 @@ public class JwtService {
     return Jwts.parser().verifyWith(generateKey()).build().parseSignedClaims(jwt).getPayload();
   }
 
-  // Checks expiration
+  // Check expiration
 
   public boolean isTokenValid(String jwt) {
     Claims claims = getClaims(jwt);

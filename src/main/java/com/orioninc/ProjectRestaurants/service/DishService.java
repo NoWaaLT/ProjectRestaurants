@@ -1,20 +1,20 @@
 package com.orioninc.ProjectRestaurants.service;
 
-import com.orioninc.ProjectRestaurants.DTO.dish.DishDTO;
+import com.orioninc.ProjectRestaurants.dto.dish.DishDto;
 import com.orioninc.ProjectRestaurants.model.Dish;
 
 import java.util.List;
 
 public interface DishService {
-    List<DishDTO> getAllDishes();
+    List<DishDto> getAllDishes();
 
-    List<DishDTO> getAllDishesByMenuId(Long id);
+    List<DishDto> getAllDishesByMenuId(Long id);
 
-    Dish getDishById(Long id);
+    DishDto getDishById(Long id);
 
-    Dish saveDish(DishDTO dishDTO);
+    DishDto saveDish(DishDto dishDTO);
 
-    Dish updateDish(DishDTO dishDTO);
+    Dish updateDish(DishDto dishDTO);
 
     void deleteDish(Long id);
 

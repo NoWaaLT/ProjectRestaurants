@@ -1,13 +1,15 @@
 package com.orioninc.ProjectRestaurants.exceptions;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import com.orioninc.ProjectRestaurants.enums.AppText;
 
-@ResponseStatus(value = HttpStatus.NOT_FOUND)
-public class MenuNotFoundException extends RuntimeException {
+public class MenuNotFoundException extends NotFoundException {
 
-    public MenuNotFoundException(String message) {
-        super(message);
+    public MenuNotFoundException(AppText message, Long id) {
+        super(message.toString() + id);
+    }
+
+    public MenuNotFoundException(AppText message) {
+        super(message.toString());
     }
 
 }

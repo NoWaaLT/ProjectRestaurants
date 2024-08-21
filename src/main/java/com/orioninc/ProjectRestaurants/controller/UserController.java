@@ -1,13 +1,13 @@
 package com.orioninc.ProjectRestaurants.controller;
 
-import com.orioninc.ProjectRestaurants.DTO.user.*;
+import com.orioninc.ProjectRestaurants.dto.user.*;
 
-import com.orioninc.ProjectRestaurants.service.RoleService;
 import com.orioninc.ProjectRestaurants.service.UserService;
 
 import lombok.AllArgsConstructor;
 
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,27 +19,23 @@ import java.util.List;
 public class UserController {
 
   private final UserService userService;
-  private final UserResponseDTOMapper userResponseDTOMapper;
-  private final RoleService roleService;
 
   @PreAuthorize("hasPermission(#id, 'User', 'read')")
   @GetMapping
-  public List<UserResponseDTO> getAllUsers() {
-    return userService.getAllUsers();
+  public ResponseEntity<List<UserResponseDto>> getAllUsers() {
+    return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
   }
 
   @PreAuthorize("hasPermission(#id, 'User', 'create')")
   @PostMapping
-  public UserResponseDTO saveUser(@RequestBody UserRequestDTO userRequestDTO) {
-    return userResponseDTOMapper.apply(userService.saveUser(userRequestDTO));
+  public ResponseEntity<UserResponseDto> saveUser(@RequestBody UserRequestDto userRequestDTO) {
+    return new ResponseEntity<>(userService.saveUser(userRequestDTO),HttpStatus.CREATED);
   }
-
-  // TODO Make update by providing username
 
   @PreAuthorize("hasPermission(#id, 'User', 'update')")
   @PutMapping(value = "/")
-  public UserResponseDTO updateUser(@RequestBody UserUpdateDTO userUpdateDTO) {
-    return userResponseDTOMapper.apply(userService.updateUser(userUpdateDTO));
+  public ResponseEntity<UserResponseDto> updateUser(@RequestBody UserUpdateDto userUpdateDTO) {
+    return new ResponseEntity<>(userService.updateUser(userUpdateDTO), HttpStatus.OK);
   }
 
 //  @PreAuthorize("hasPermission(#id, 'User', 'read')")

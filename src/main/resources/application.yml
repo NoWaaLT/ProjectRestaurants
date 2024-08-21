@@ -1,13 +1,3 @@
- logging:
-     file:
-         name: log/project_restaurants_default_log.log
-     level:
-         org:
-             springframework:
-                 web: INFO
-             hibernate: ERROR
-         com:
-             orioninc: DEBUG
  spring:
     application:
         name: ProjectRestaurants
@@ -24,6 +14,10 @@
             hibernate:
                 dialect: org.hibernate.dialect.MySQL8Dialect
         show-sql: true
+    cache:
+        cache-names: products
+        caffeine:
+            spec: maximumSize=500, expireAfterAccess=15m
     liquibase:
         change-log: classpath:/db/changelog/app-changelog.xml
         default-schema:

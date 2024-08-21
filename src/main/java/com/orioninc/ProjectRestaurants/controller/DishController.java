@@ -1,12 +1,14 @@
 package com.orioninc.ProjectRestaurants.controller;
 
-import com.orioninc.ProjectRestaurants.DTO.dish.DishDTO;
-import com.orioninc.ProjectRestaurants.DTO.dish.DishResponseDTOMapper;
+import com.orioninc.ProjectRestaurants.dto.dish.DishDto;
 import com.orioninc.ProjectRestaurants.model.Dish;
 import com.orioninc.ProjectRestaurants.service.DishService;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,42 +20,40 @@ import java.util.List;
 public class DishController {
 
   private final DishService dishService;
-  private final DishResponseDTOMapper dishResponseDTOMapper;
 
   @PreAuthorize("hasPermission(#id, 'Dish', 'read')")
   @GetMapping
-  public List<DishDTO> getAllDishes() {
-    return dishService.getAllDishes();
+  public ResponseEntity<List<DishDto>> getAllDishes() {
+    return new ResponseEntity<>(dishService.getAllDishes(), HttpStatus.OK);
   }
 
   @PreAuthorize("hasPermission(#id, 'Dish', 'read')")
-  @GetMapping(value = "/menu-{id}")
-  public List<DishDTO> getAllDishesByMenuId(@PathVariable Long id) {
-    return dishService.getAllDishesByMenuId(id);
+  @GetMapping(value = "/menu/{id}")
+  public ResponseEntity<List<DishDto>> getAllDishesByMenuId(@PathVariable Long id) {
+    return new ResponseEntity<>(dishService.getAllDishesByMenuId(id), HttpStatus.OK);
   }
 
   @PreAuthorize("hasPermission(#id, 'Dish', 'read')")
   @GetMapping(value = "/{id}")
-  public DishDTO getDishById(@PathVariable Long id) {
-    return dishResponseDTOMapper.apply(dishService.getDishById(id));
+  public ResponseEntity<DishDto> getDishById(@PathVariable Long id) {
+    return new ResponseEntity<>(dishService.getDishById(id), HttpStatus.OK);
   }
 
   @PreAuthorize("hasPermission(#id, 'Dish', 'create')")
   @PostMapping
-  public Dish saveDish(@RequestBody DishDTO dishDTO) {
-    return dishService.saveDish(dishDTO);
+  public ResponseEntity<DishDto> saveDish(@Valid @RequestBody DishDto dishDTO) {
+    return new ResponseEntity<>(dishService.saveDish(dishDTO), HttpStatus.CREATED);
   }
-
-  // TODO consider making update by id in uri
 
   @PreAuthorize("hasPermission(#id, 'Dish', 'update')")
   @PutMapping(value = "/dishes/update")
-  public Dish updateDish(@RequestBody DishDTO dishDTO) {
-    return dishService.updateDish(dishDTO);
+  public ResponseEntity<Dish> updateDish(@Valid @RequestBody DishDto dishDTO) {
+    return new ResponseEntity<>(dishService.updateDish(dishDTO), HttpStatus.OK);
   }
 
   @PreAuthorize("hasPermission(#id, 'Dish', 'delete')")
   @DeleteMapping(value = "/{id}")
+  @ResponseStatus(value = HttpStatus.NO_CONTENT, reason = "Deleted succesfully!")
   public void deleteDish(@PathVariable Long id) {
     dishService.deleteDish(id);
   }

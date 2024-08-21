@@ -1,6 +1,7 @@
 package com.orioninc.ProjectRestaurants.auth.webtoken;
 
 import com.orioninc.ProjectRestaurants.auth.MyUserDetailsService;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 
@@ -23,12 +25,12 @@ import java.io.IOException;
 @Configuration
 @AllArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
+  private final HandlerExceptionResolver handlerExceptionResolver;
   private final JwtService jwtService;
   private final MyUserDetailsService myUserDetailsService;
 
   @Override
-  protected void doFilterInternal(
+  protected void doFilterInternal (
       HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
     String authHeader = request.getHeader("Authorization"); // Get the authHeader if exists
@@ -36,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       filterChain.doFilter(request, response);  // Does nothing
       return;
     }
-
+    try {
     String jwt = authHeader.substring(7); // 7 due to "Bearer " contains 7 elements. Extracts only token
     String username = jwtService.extractUsername(jwt);
 
@@ -57,5 +59,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     filterChain.doFilter(request, response);  // Proceeding to next chain element
+      } catch (ExpiredJwtException e) {
+      handlerExceptionResolver.resolveException(request, response, null, e);
+    }
   }
 }
