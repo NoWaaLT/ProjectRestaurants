@@ -2,33 +2,43 @@
     application:
         name: ProjectRestaurants
     datasource:
-        url: jdbc:mysql://localhost:3306/restaurant_db
-        password: 123456789d
+        url: jdbc:mysql://localhost:3307/restaurant_db?createDatabaseIfNotExist=true&useSSL=true
+#        url: jdbc:mysql://mysqldb:3306/restaurant_db
         username: root
+        password: 123456789d
     jpa:
         generate-ddl: true
         hibernate:
             ddl:
-                auto: update
-        properties:
-            hibernate:
-                dialect: org.hibernate.dialect.MySQL8Dialect
+                auto: none
+#        properties:
+#            hibernate:
+#                dialect: org.hibernate.dialect.MySQLDialect // was MySQL8Dialect
         show-sql: true
-    cache:
-        cache-names: products
-        caffeine:
-            spec: maximumSize=500, expireAfterAccess=15m
     liquibase:
         change-log: classpath:/db/changelog/app-changelog.xml
+        enabled: true
         default-schema:
     output:
         ansi:
             enabled: ALWAYS
+    kafka:
+        bootstrap-servers: localhost:9092
+        consumer:
+            group-id: consumers_1
  management:
      endpoints:
          web:
              exposure:
-                 include: health, info, metrics
+                 include: health, info, metrics, beans
      endpoint:
          health:
              show-details: always
+         beans:
+              enabled: true
+ cache-manager:
+    caffeine-caches:
+    - cache-names: [productsCache]
+      spec: maximumSize=300, expireAfterAccess=15m
+    - cache-names: [menus]
+      spec: initialCapacity = 1, maximumSize=10, expireAfterAccess=15m

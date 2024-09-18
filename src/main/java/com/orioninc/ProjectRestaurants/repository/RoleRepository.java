@@ -14,5 +14,5 @@ import java.util.Optional;
 
 //public interface RoleRepository extends BaseRepository<Role, Long> {
   Optional<Role> findByRoleName(String roleName);
-  List<Permission> getPermissionsByRole();
+//  List<Permission> getPermissionsByRole();
 }

@@ -1,7 +1,6 @@
 package com.orioninc.ProjectRestaurants.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,9 +27,13 @@ public class User {
   @Column(name = "password_hash")
   private String passwordHash;
 
+  @Column(name = "salt")
+  private String salt;
+
   //  @Enumerated(EnumType.STRING)
   //    @OneToMany(mappedBy = "user")
   //    private Role role;
+
   @JsonBackReference
   @ManyToMany(fetch = FetchType.EAGER) // n+1
   @JoinTable(
@@ -44,5 +47,3 @@ public class User {
   @OneToMany(mappedBy = "user") // n+1
   private List<Order> orderList;
 }
-
-// TODO leverage entities by spec. attributes

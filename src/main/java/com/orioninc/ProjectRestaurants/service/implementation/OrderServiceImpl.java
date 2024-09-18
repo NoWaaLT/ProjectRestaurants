@@ -9,6 +9,7 @@ import com.orioninc.ProjectRestaurants.repository.OrderRepository;
 import com.orioninc.ProjectRestaurants.service.OrderService;
 
 import lombok.AllArgsConstructor;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

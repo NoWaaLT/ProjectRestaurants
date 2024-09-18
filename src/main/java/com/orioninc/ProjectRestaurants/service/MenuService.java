@@ -12,7 +12,8 @@ public interface MenuService {
     List<MenuResponseDto> getAllMenus();
     List<MenuResponseDto> getAllMenusByRestaurant(Long id);
     MenuResponseDto getMenuById(Long id);
-    Menu saveMenu(MenuRequestDto menuRequestDTO);
+    MenuResponseDto saveMenu(MenuRequestDto menuRequestDTO);
+    List<MenuResponseDto> saveMenuList(List<MenuRequestDto> menuList);
     MenuResponseDto updateMenu(MenuRequestDto menuRequestDTO);
     void deleteMenu(Long id);
 

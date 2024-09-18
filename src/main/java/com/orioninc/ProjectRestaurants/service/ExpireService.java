@@ -16,4 +16,5 @@ public interface ExpireService {
     Expire updateProductExpire(ExpireRequestDto expireRequestDTO);
     void deleteProductExpire(long id);
     void saveExpire(Product product, Float productBatch);
+    Integer getEarliestExpire(List<Expire> listOfExpires);
 }

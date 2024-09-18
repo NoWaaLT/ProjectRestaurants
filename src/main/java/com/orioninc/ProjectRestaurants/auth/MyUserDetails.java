@@ -14,7 +14,8 @@ public class MyUserDetails implements UserDetails {
 
   private User user;
 
-  public MyUserDetails(User user) { this.user = user;
+  public MyUserDetails(User user) {
+    this.user = user;
   }
 
   @Override
@@ -42,6 +43,10 @@ public class MyUserDetails implements UserDetails {
   @Override
   public String getUsername() {
     return user.getUsername();
+  }
+
+  public String getSalt() {
+    return user.getSalt();
   }
 
   @Override

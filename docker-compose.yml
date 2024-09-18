@@ -1,0 +1,48 @@
+version: '3.8'
+
+volumes:
+  db_data:
+
+networks:
+  springboot-mysql-network:
+    name: springboot-mysql-network
+
+services:
+#  app:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    container_name: restaurants-app
+#    depends_on:
+#      mysqldb:
+#        condition: service_healthy
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3307/restaurant_db?createDatabaseIfNotExist=true&useSSL=true
+#      SPRING_DATASOURCE_USERNAME: root
+#      SPRING_DATASOURCE_PASSWORD: 123456789d
+#    networks:
+#      - springboot-mysql-network
+#
+#    ports:
+#      - 8090:8080
+
+  mysqldb:
+    container_name: mysql-container
+    image: mysql:8.0.37
+    ports:
+      - 3307:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456789d
+      MYSQL_DATABASE: restaurant_db
+    networks:
+      - springboot-mysql-network
+    volumes:
+#      - C:/Users/vjelis/IdeaProjects/ProjectRestaurants/src/main/resources/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+#      - ./src/main/resources/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "--silent" ]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s

@@ -1,18 +1,17 @@
 package com.orioninc.ProjectRestaurants.config;
 
+import com.orioninc.ProjectRestaurants.auth.CustomDaoAuthenticationProvider;
 import com.orioninc.ProjectRestaurants.auth.webtoken.JwtAuthenticationFilter;
 import com.orioninc.ProjectRestaurants.permission.CustomPermissionEvaluator;
 import com.orioninc.ProjectRestaurants.auth.MyUserDetailsService;
 
-import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,14 +26,20 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@AllArgsConstructor
 public class SecurityConfig {
 
-  private final CustomPermissionEvaluator customPermissionEvaluator;
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
+  private final CustomDaoAuthenticationProvider customDaoAuthenticationProvider;
+
+  public SecurityConfig(
+      JwtAuthenticationFilter jwtAuthenticationFilter,
+      @Lazy CustomDaoAuthenticationProvider customDaoAuthenticationProvider) {
+    this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    this.customDaoAuthenticationProvider = customDaoAuthenticationProvider;
+  }
 
   @Bean
-  public UserDetailsService userDetailsService() { // Provides save way to LoadUserByUsername()
+  public UserDetailsService userDetailsService() {
     return new MyUserDetailsService();
   }
 
@@ -57,8 +62,8 @@ public class SecurityConfig {
                     .permitAll()
                     .anyRequest()
                     .anonymous())
-        .httpBasic(Customizer.withDefaults()) // It's says it will be in form of http/https
-        .formLogin(Customizer.withDefaults()) // It's says how login form should be handled
+        .httpBasic(Customizer.withDefaults()) // It's says it will be in the form of http/https
+        .formLogin(Customizer.withDefaults()) // It's says how the login form should be handled
         .addFilterBefore(
             jwtAuthenticationFilter, // To enable AuthFilter before the specified filter
             UsernamePasswordAuthenticationFilter.class)
@@ -66,30 +71,14 @@ public class SecurityConfig {
   }
 
   @Bean
-  public AuthenticationProvider
-      authenticationProvider() { // Process the request to retrieve user credentials
-    DaoAuthenticationProvider provider =
-        new DaoAuthenticationProvider(); // through UserServiceDetails via Dao
-    provider.setUserDetailsService(userDetailsService());
-    provider.setPasswordEncoder(passwordEncoder());
-
-    return provider;
-  }
-
-  @Bean
   public AuthenticationManager authenticationManager() { // Used for JJWT, to validate user and pass
-    return new ProviderManager(authenticationProvider());
+    return new ProviderManager(customDaoAuthenticationProvider);
   }
 
   @Bean
   public PasswordEncoder passwordEncoder() { // One side code encryption
     return new BCryptPasswordEncoder(); // Built-in salt added
   }
-
-  //  @Bean
-  //  public CustomPermissionEvaluator customPermissionEvaluator() {
-  //    return new CustomPermissionEvaluator();
-  //  }
 
   @Bean
   public MethodSecurityExpressionHandler expressionHandler(
@@ -101,6 +90,4 @@ public class SecurityConfig {
 
     return handler;
   }
-
-
 }

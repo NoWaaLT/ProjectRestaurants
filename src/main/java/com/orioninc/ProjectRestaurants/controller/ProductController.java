@@ -11,9 +11,6 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,7 +28,6 @@ public class ProductController {
 
   @PreAuthorize("hasPermission(#id, 'Product', 'read')")
   @GetMapping(value = "/restaurant/{id}")
-  @Cacheable(key = "#id")
   public ResponseEntity<List<ProductDto>> findAllProductsByRestaurantId(
       @PathVariable("id") Long id) {
     List<ProductDto> productList = productService.getAllProductByRestaurantId(id);
@@ -47,19 +43,18 @@ public class ProductController {
   @PreAuthorize("hasPermission(#id, 'Product', 'create')")
   @PostMapping(value = "/single")
   public ResponseEntity<ProductDto> saveProduct(@Valid @RequestBody ProductAddDto productAddDTO) {
-    return new ResponseEntity<>(productService.saveProduct(productAddDTO), HttpStatus.OK);
+    return new ResponseEntity<>(productService.saveProduct(productAddDTO), HttpStatus.CREATED);
   }
 
   @PreAuthorize("hasPermission(#id, 'Product', 'create')")
   @PostMapping(value = "/list")
   public ResponseEntity<List<ProductAddDto>> saveProducts(
       @Valid @RequestBody List<ProductAddDto> productsListAddDTO) {
-    return new ResponseEntity<>(productService.saveProducts(productsListAddDTO), HttpStatus.OK);
+    return new ResponseEntity<>(productService.saveProducts(productsListAddDTO), HttpStatus.CREATED);
   }
 
   @PreAuthorize("hasPermission(#id, 'Product', 'update')")
   @PutMapping
-  @CachePut(key = "#id")
   public ResponseEntity<ProductDto> updateProduct(
       @Valid @RequestBody ProductDto productDTO) { // TODO doesn't work
     Product updatedProduct = productService.updateProduct(productDTO);
@@ -70,7 +65,6 @@ public class ProductController {
   @PreAuthorize("hasPermission(#id, 'Product', 'delete')")
   @DeleteMapping(value = "/{id}")
   @ResponseStatus(value = HttpStatus.NO_CONTENT, reason = "Deleted successfully!")
-  @CacheEvict(key = "#id")
   public void deleteProduct(@PathVariable long id) {
     productService.deleteProduct(id);
   }

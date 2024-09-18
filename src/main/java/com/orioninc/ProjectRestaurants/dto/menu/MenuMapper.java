@@ -1,19 +1,33 @@
 package com.orioninc.ProjectRestaurants.dto.menu;
 
+import com.orioninc.ProjectRestaurants.dto.restaurant.RestaurantMapper;
 import com.orioninc.ProjectRestaurants.model.Menu;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
+import com.orioninc.ProjectRestaurants.model.Restaurant;
+import org.mapstruct.*;
 
-@Mapper
+import java.util.List;
+
+@Mapper(componentModel = "spring", uses = RestaurantMapper.class)
 public interface MenuMapper {
+  MenuResponseDto menuToMenuResponseDto(Menu menu);
 
-    MenuMapper INSTANCE = Mappers.getMapper(MenuMapper.class);
+  @Mapping(target = "id", ignore = true)
+  @Mapping(source = "restaurant", target = "restaurant.id")
+  @Mapping(target = "dishList", ignore = true)
+  @Mapping(source = "restaurant", target = "restaurantName")
+  Menu menuRequestDtoToMenu(MenuRequestDto menuRequestDTO);
 
-    MenuResponseDto menuToMenuResponseDto(Menu menu);
+  @Mapping(target = "id", ignore = true)
+  @Mapping(source = "restaurant", target = "restaurant")
+  @Mapping(target = "dishList", ignore = true)
+  @Mapping(source = "restaurant.restaurantName", target = "restaurantName", qualifiedByName = "trimName")
+  @Mapping(source = "menuRequestDto.menuName", target = "menuName")
+  Menu menuRequestDtoToMenu(Restaurant restaurant, MenuRequestDto menuRequestDto);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(source = "restaurant", target = "restaurant.id")
-    @Mapping(target = "dishList", ignore = true)
-    Menu menuRequestDtoToMenu(MenuRequestDto menuRequestDTO);
+  List<MenuResponseDto> toResponseList(List<MenuRequestDto> menuRequestList);
+
+  @Named("trimName")
+  default String trimName(String name) {
+    return name.trim();
+  }
 }

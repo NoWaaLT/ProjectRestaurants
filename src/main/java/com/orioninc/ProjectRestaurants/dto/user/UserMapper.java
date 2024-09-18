@@ -1,31 +1,43 @@
 package com.orioninc.ProjectRestaurants.dto.user;
 
+import com.orioninc.ProjectRestaurants.dto.role.RoleMapper;
+import com.orioninc.ProjectRestaurants.model.Role;
 import com.orioninc.ProjectRestaurants.model.User;
-import org.mapstruct.DecoratedWith;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
+import org.mapstruct.*;
 
-@Mapper
-@DecoratedWith(UserMapperDecorator.class)
+import java.util.List;
+
+@Mapper(componentModel = "spring",  uses = RoleMapper.class, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+//@DecoratedWith(UserMapperDecorator.class)
 public interface UserMapper {
-    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
     @Mapping(target = "roles", ignore = true)
-    UserResponseDto userRequestDtoToUserResponseDto(UserRequestDto userRequestDTO);
+    UserDto toUserDto(UserCreateDto userCreateDto);
 
-    @Mapping(target = "id", ignore = true)
+    @Mapping(source = "user.username" , target = "username")        //
+    @Mapping(source = "user.roles", target = "roles", qualifiedByName = "mapRoles")
+    UserDto toUserDto(UserCreateDto userCreateDto, User user);
+
+    @Mapping(source = "roles", target = "roles", qualifiedByName = "mapRoles")
+    UserDto toUserDto(User user);
+
     @Mapping(target = "orderList", ignore = true)
     @Mapping(target = "passwordHash", ignore = true)
-    @Mapping(target = "roles", ignore = true)
-    User userRequestDtoToUser(UserRequestDto userRequestDto);
+    @Mapping(target = "salt", ignore = true)
+    @Mapping(source = "roles", target = "roles")
+    User toUser(UserUpdateDto userUpdateDTO);
 
-    @Mapping(target = "orderList", ignore = true)
-    @Mapping(target = "passwordHash", ignore = true)
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "username", ignore = true)
-    @Mapping(target = "roles", ignore = true)
-    User userUpdateDtoToUser(UserUpdateDto userUpdateDTO);
+//    @Mapping(target = "orderList", ignore = true)
+//    @Mapping(target = "passwordHash", ignore = true)
+//    @Mapping(target = "id", ignore = true)
+//    @Mapping(target = "username", ignore = true)
+//    @Mapping(target = "roles", ignore = true)
+//    User convertToUser(UserUpdateDto userUpdateDTO, User user);
 
-    UserResponseDto userToUserResponseDto(User user);
+    @Named("mapRoles")
+    default List<String> mapRoles(List<Role> roles) {
+        return roles.stream()
+                .map(Role::getRoleName)
+                .toList();
+    }
 }

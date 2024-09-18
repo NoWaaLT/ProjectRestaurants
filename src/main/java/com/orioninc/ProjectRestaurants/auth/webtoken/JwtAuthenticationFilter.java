@@ -38,8 +38,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       filterChain.doFilter(request, response);  // Does nothing
       return;
     }
+
     try {
-    String jwt = authHeader.substring(7); // 7 due to "Bearer " contains 7 elements. Extracts only token
+    String jwt = authHeader.substring(7);   // 7 due to "Bearer " contains 7 elements. Extracts only token
     String username = jwtService.extractUsername(jwt);
 
     if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {   // Checks is user authenticated

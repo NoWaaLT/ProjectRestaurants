@@ -32,7 +32,10 @@ public enum AppText {
     USER_BY_ID_NOT_FOUND("User not found by id: "),
     USER_BY_USERNAME_NOT_FOUND("User not found by username: "),
     USER_NO_ORDER("You don't have any active orders."),
-    USERS_EMPTY("No users in the database");
+    USERS_EMPTY("No users in the database"),
+
+    INCORRECT_OLD_PASSWORD("Old password is incorrect."),
+    INCORRECT_PASSWORD("Password is incorrect.");
 
     private final String description;
     AppText(String description) {

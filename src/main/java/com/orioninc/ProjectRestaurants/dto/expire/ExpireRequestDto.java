@@ -12,7 +12,7 @@ public record ExpireRequestDto(
         @PositiveOrZero(message = "Expire duration must be positive number.")
         Integer expireDuration,
         @NotNull(message = "Batch quantity must be specified.")
-        @Positive(message = "Batch quantity price must be positive number.")
+        @PositiveOrZero(message = "Batch quantity must be 0 or positive number.")
         Float batchQuantity,
         @NotNull(message = "Product id must be specified.")
         @Positive(message = "Product id must be a positive number.")

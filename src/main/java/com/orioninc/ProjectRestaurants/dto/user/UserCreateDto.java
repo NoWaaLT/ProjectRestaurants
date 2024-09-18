@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class UserRequestDto {
+public class UserCreateDto {
   @NotNull(message = "Username cannot be null.")
   @NotBlank(message = "Username cannot be empty.")
   String username;

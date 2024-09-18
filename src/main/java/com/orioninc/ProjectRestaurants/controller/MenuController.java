@@ -2,9 +2,11 @@ package com.orioninc.ProjectRestaurants.controller;
 
 import com.orioninc.ProjectRestaurants.dto.menu.MenuRequestDto;
 import com.orioninc.ProjectRestaurants.dto.menu.MenuResponseDto;
+import com.orioninc.ProjectRestaurants.dto.product.ProductAddDto;
 import com.orioninc.ProjectRestaurants.model.Menu;
 import com.orioninc.ProjectRestaurants.service.MenuService;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 import org.springframework.http.HttpStatus;
@@ -40,9 +42,16 @@ public class MenuController {
   }
 
   @PreAuthorize("hasPermission(#id, 'Menu', 'create')")
-  @PostMapping
-  public ResponseEntity<Menu> saveMenu(@RequestBody MenuRequestDto menuRequestDTO) {
+  @PostMapping(value = "/single")
+  public ResponseEntity<MenuResponseDto> saveMenu(@RequestBody MenuRequestDto menuRequestDTO) {
     return new ResponseEntity<>(menuService.saveMenu(menuRequestDTO), HttpStatus.CREATED);
+  }
+
+  @PreAuthorize("hasPermission(#id, 'Menu', 'create')")
+  @PostMapping(value = "/list")
+  public ResponseEntity<List<MenuResponseDto>> saveProducts(
+          @Valid @RequestBody List<MenuRequestDto> menuRequestDtoList) {
+    return new ResponseEntity<>(menuService.saveMenuList(menuRequestDtoList), HttpStatus.CREATED);
   }
 
   @PreAuthorize("hasPermission(#id, 'Menu', 'update')")

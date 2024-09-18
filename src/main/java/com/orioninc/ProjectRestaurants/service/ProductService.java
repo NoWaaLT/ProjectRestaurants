@@ -1,8 +1,8 @@
 package com.orioninc.ProjectRestaurants.service;
 
-import com.orioninc.ProjectRestaurants.dto.expire.ExpireResponseDto;
 import com.orioninc.ProjectRestaurants.dto.product.ProductAddDto;
 import com.orioninc.ProjectRestaurants.dto.product.ProductDto;
+import com.orioninc.ProjectRestaurants.model.Expire;
 import com.orioninc.ProjectRestaurants.model.Product;
 
 import java.util.List;
@@ -20,5 +20,5 @@ public interface ProductService {
 
   void deleteProduct(Long id);
 
-  Long findOldestDate(List<ExpireResponseDto> listOfExpires);
+  void updateExpire(float balance, List<Expire> expireList);
 }

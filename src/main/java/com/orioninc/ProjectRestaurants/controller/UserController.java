@@ -14,35 +14,39 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@AllArgsConstructor
 @RequestMapping(value = "/api/customer")
 public class UserController {
 
   private final UserService userService;
 
+  public UserController(UserService userService) {
+    this.userService = userService;
+  }
+
   @PreAuthorize("hasPermission(#id, 'User', 'read')")
   @GetMapping
-  public ResponseEntity<List<UserResponseDto>> getAllUsers() {
+  public ResponseEntity<List<UserDto>> getAllUsers() {
     return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
   }
 
   @PreAuthorize("hasPermission(#id, 'User', 'create')")
   @PostMapping
-  public ResponseEntity<UserResponseDto> saveUser(@RequestBody UserRequestDto userRequestDTO) {
-    return new ResponseEntity<>(userService.saveUser(userRequestDTO),HttpStatus.CREATED);
+  public ResponseEntity<UserDto> saveUser(@RequestBody UserCreateDto userCreateDTO) {
+    return new ResponseEntity<>(userService.saveUser(userCreateDTO),HttpStatus.CREATED);
   }
 
   @PreAuthorize("hasPermission(#id, 'User', 'update')")
   @PutMapping(value = "/")
-  public ResponseEntity<UserResponseDto> updateUser(@RequestBody UserUpdateDto userUpdateDTO) {
+  public ResponseEntity<UserDto> updateUser(@RequestBody UserUpdateDto userUpdateDTO) {
     return new ResponseEntity<>(userService.updateUser(userUpdateDTO), HttpStatus.OK);
   }
+
+  // TODO change password and roles
 
 //  @PreAuthorize("hasPermission(#id, 'User', 'read')")
 //  @GetMapping(value = "/findRole/{roleName}")
 //  public Optional<Role> getByRoleName(@PathVariable String roleName) {
 //    return roleService.findByRoleName(roleName);
 //  }
-
 
 }

@@ -27,7 +27,7 @@ public class JwtService {
   private static final String SECRET =
       "9BD3BF9695E54B688D158C4A3CB2D4FB7475BE81B17788BAC51BBE63862AD77947B0D593007D3B5A55F8A5486EA6E5786111A6CC2BBC098B8B4B3CD311A257B1"; // Used to generate and validate
 
-  private static final long VALIDITY = TimeUnit.MINUTES.toMillis(10); // Duration of a token
+  private static final long VALIDITY = TimeUnit.MINUTES.toMillis(60); // Duration of a token
 
   public String generateToken(UserDetails userDetails) {
     Map<String, String> claims = new HashMap<>();

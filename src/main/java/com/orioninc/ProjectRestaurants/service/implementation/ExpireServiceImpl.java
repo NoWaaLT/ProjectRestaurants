@@ -12,12 +12,16 @@ import com.orioninc.ProjectRestaurants.utils.ExpireDateUtil;
 
 import lombok.AllArgsConstructor;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static com.orioninc.ProjectRestaurants.enums.AppText.*;
 
@@ -57,35 +61,76 @@ public class ExpireServiceImpl implements ExpireService {
 
   @Override
   @Transactional(propagation = Propagation.REQUIRED)
-  public void saveExpire(Product product, Float productBatch) {
+  public void saveExpire(@NotNull Product product, Float productBatch) {
     if (product.getProductExpiration() > 0) {
-      expireRepository.save(
-          ExpireMapper.INSTANCE.expireRequestDtoToExpire(product, productBatch));
+      expireRepository.save(ExpireMapper.INSTANCE.expireRequestDtoToExpire(product, productBatch));
     }
   }
 
   @Transactional(isolation = Isolation.READ_COMMITTED)
   @Override
-  public Expire updateProductExpire(ExpireRequestDto expireRequestDTO) {
+  public Expire updateProductExpire(@NotNull ExpireRequestDto expireRequestDto) {
+    long expireId = expireRequestDto.id();
     Expire existingExpire =
         expireRepository
-            .findById(expireRequestDTO.id())
-            .orElseThrow(
-                () -> new ExpireNotFoundException(PRODUCT_EXPIRE_BY_ID, expireRequestDTO.id()));
+            .findById(expireId)
+            .orElseThrow(() -> new ExpireNotFoundException(PRODUCT_EXPIRE_BY_ID, expireId));
 
-    existingExpire.setId(expireRequestDTO.id());
-    existingExpire.setExpireDate(ExpireDateUtil.expirationDate(expireRequestDTO.expireDuration()));
+    existingExpire.setId(expireId);
+
+    long productId = expireRequestDto.productId();
 
     Product product =
         productRepository
-            .findById(expireRequestDTO.productId())
-            .orElseThrow(
-                () ->
-                    new ProductNotFoundException(
-                        PRODUCT_BY_ID_NOT_FOUND, expireRequestDTO.productId()));
+            .findById(productId)
+            .orElseThrow(() -> new ProductNotFoundException(PRODUCT_BY_ID_NOT_FOUND, productId));
 
     existingExpire.setProduct(product);
-    existingExpire.setBatchQuantity(expireRequestDTO.batchQuantity());
+
+    int expireDuration = expireRequestDto.expireDuration();
+    int currentExpireDuration = product.getProductExpiration();
+    int diff;
+
+    Date currentExpire = existingExpire.getExpireDate();
+    Date newExpireDate;
+
+    if (expireDuration == currentExpireDuration) {
+      existingExpire.setExpireDate(currentExpire);
+    } else if (expireDuration < currentExpireDuration) {
+      diff = currentExpireDuration - expireDuration;
+      newExpireDate = ExpireDateUtil.getExpireDate(-diff, currentExpire);
+      existingExpire.setExpireDate(newExpireDate);
+    } else {
+      diff = expireDuration - currentExpireDuration;
+      newExpireDate = ExpireDateUtil.getExpireDate(diff, currentExpire);
+      existingExpire.setExpireDate(newExpireDate);
+    }
+
+    productRepository.setProductExpire(expireDuration, product.getId());
+
+    float amount = expireRequestDto.batchQuantity();
+    float currentAmount = existingExpire.getBatchQuantity();
+    float currentProductBalance = product.getProductBalance();
+
+    if (amount < currentAmount) {
+      float balance = currentAmount - amount;
+      productRepository.setProductBalance(currentProductBalance - balance, productId);
+
+      if (currentAmount == 0.0f) {
+        existingExpire.setRemovedProduct(true);
+      }
+    }
+
+    if (amount > currentAmount) {
+      float balance = amount - currentAmount;
+      productRepository.setProductBalance(currentProductBalance + balance, productId);
+
+      if (amount > 0.0f) {
+        existingExpire.setRemovedProduct(false);
+      }
+    }
+
+    existingExpire.setBatchQuantity(amount);
 
     return expireRepository.save(existingExpire);
   }
@@ -94,6 +139,17 @@ public class ExpireServiceImpl implements ExpireService {
   @Override
   public void deleteProductExpire(long id) {
     expireRepository.deleteById(id);
+  }
+
+  @Override
+  public Integer getEarliestExpire(@NotNull List<Expire> listOfExpires) {
+    return IntStream.range(0, listOfExpires.size())
+        .filter(i -> !listOfExpires.get(i).getRemovedProduct())
+        .boxed()
+        .min(Comparator.comparing(i -> listOfExpires.get(i).getExpireDate()))
+        .stream()
+        .findFirst()
+        .orElse(-1);
   }
 
   //  @Override

@@ -44,7 +44,7 @@ public class ExpireController {
 //    }
 
     @PreAuthorize("hasPermission(#id, 'Expire', 'update')")
-    @PutMapping(value = "products/expire/")
+    @PutMapping
     public ResponseEntity<Expire> updateProductExpire(@Valid @RequestBody ExpireRequestDto expireRequestDTO) {
         return new ResponseEntity<>(expireService.updateProductExpire(expireRequestDTO), HttpStatus.OK);
     }

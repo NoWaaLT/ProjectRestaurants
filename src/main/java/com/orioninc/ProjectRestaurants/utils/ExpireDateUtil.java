@@ -7,13 +7,16 @@ import java.util.Date;
 
 @UtilityClass
 public class ExpireDateUtil {
+    Calendar calendar = Calendar.getInstance();
 
-    public static Date expirationDate(int expireDuration) {
-        Date currentDate = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(currentDate);
-        calendar.add(Calendar.DATE, expireDuration);
+    public static Date getExpireDate(int diff, Date date) {
+        calendar.setTime(date);
+        calendar.add(Calendar.DATE, diff);
 
         return calendar.getTime();
     }
+
+
+
+
 }

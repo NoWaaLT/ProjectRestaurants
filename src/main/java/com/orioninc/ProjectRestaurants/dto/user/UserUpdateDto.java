@@ -10,13 +10,16 @@ import java.util.List;
 
 public record UserUpdateDto(
     @NotNull(message = "User id must be specified.")
-        @Positive(message = "User id must be a positive number.")
-        Long id,
+    @Positive(message = "User id must be a positive number.")
+    Long id,
+
     @NotNull(message = "Username cannot be null.") @NotBlank(message = "Username cannot be empty.")
-        String username,
-    @Pattern(
-            regexp = "^(?=.*\\d)(?=.*[A-Z]).{6,8}$",
-            message =
+    String username,
+
+    @NotNull
+    String oldPassword,
+
+    @Pattern(regexp = "^(?=.*\\d)(?=.*[A-Z]).{6,8}$", message =
                 "Password must contain from 6 to 8 characters, at least 1 number and alphabet in capitals. No special chars allowed.")
-        String password,
+    String password,
     List<RoleDto> roles) {}

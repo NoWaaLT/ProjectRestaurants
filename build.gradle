@@ -7,6 +7,10 @@ plugins {
 group = 'com.orioninc'
 version = '0.0.1-SNAPSHOT'
 
+bootJar {
+    archiveFileName = 'project_restaurants.jar'
+}
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
@@ -71,8 +75,13 @@ dependencies {
 
     // cache
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-cache', version: '3.3.0'
+
     // Caffeine lib cache
     implementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '3.1.8'
+
+    implementation group: 'org.jetbrains', name: 'annotations', version: '24.0.0'
+
+    implementation group: 'org.springframework.kafka', name: 'spring-kafka', version: '3.2.3'
 }
 
 tasks.named('test') {

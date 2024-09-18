@@ -18,7 +18,7 @@ public abstract class ExpireMapperDecorator implements ExpireMapper {
   public Expire expireRequestDtoToExpire(Product product, Float productBatch) {
     Expire expire = new Expire();
     expire.setProduct(product);
-    Date newDate = ExpireDateUtil.expirationDate(product.getProductExpiration());
+    Date newDate = ExpireDateUtil.getExpireDate(product.getProductExpiration(), new Date());
     expire.setExpireDate(newDate);
     expire.setBatchQuantity(productBatch);
     expire.setRemovedProduct(false);
