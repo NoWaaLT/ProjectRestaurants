@@ -1,5 +1,4 @@
 <databaseChangeLog
-
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
@@ -34,10 +33,17 @@
     <include file="db/changelog/scripts/V8_menus_table_customization/add_column_restaurant_name.sql"/>
     <include file="db/changelog/scripts/V9_products_table_customization_3/change_minimum_balance_type_to_float.sql"/>
     <include file="db/changelog/scripts/V10_users_table_customization/change_username_column_to_unique.sql"/>
-    <include file="db/changelog/scripts/V11_order_table_customization/change_fk_user_id_column_name_to_fk_username.sql"/>  <!-- missing -->
+
+<!--    <include file="db/changelog/scripts/V11_order_table_customization/change_fk_user_id_column_name_to_fk_username.sql"/>  &lt;!&ndash; missing &ndash;&gt;-->
 <!--    <include file="db/changelog/scripts/V11_order_table_customization/drop_constraint_fk_orders_user.sql"/>-->
-    <include file="db/changelog/scripts/V11_order_table_customization/add_constraint_fk_username_to_username.sql"/> <!-- missing  2-->
+<!--    <include file="db/changelog/scripts/V11_order_table_customization/add_constraint_fk_username_to_username.sql"/> &lt;!&ndash; missing  2&ndash;&gt;-->
+<!--    <include file="db/changelog/scripts/V11_order_table_customization/change_fk_user_id_column_type_to_varchar.sql"/>-->
+
+    <include file="db/changelog/scripts/V11_order_table_customization/drop_constraint_fk_orders_user.sql"/>
+    <include file="db/changelog/scripts/V11_order_table_customization/change_fk_user_id_column_name_to_fk_username.sql"/>
     <include file="db/changelog/scripts/V11_order_table_customization/change_fk_user_id_column_type_to_varchar.sql"/>
+    <include file="db/changelog/scripts/V11_order_table_customization/add_constraint_fk_username_to_username.sql"/>
+
     <include file="db/changelog/scripts/V12_products_expire_table_customization/add_removed_column.sql"/> <!-- missing -->
     <include file="db/changelog/scripts/V12_products_expire_table_customization/fill_removed_column_values.sql"/>
     <include file="db/changelog/scripts/V12_products_expire_table_customization/change_removed_column_values.sql"/>
@@ -49,7 +55,7 @@
     <include file="db/changelog/scripts/V16_data_initialization_2/import_roles_data.sql"/>
     <include file="db/changelog/scripts/V16_data_initialization_2/import_permissions_data.sql"/>
     <include file="db/changelog/scripts/V16_data_initialization_2/import_role_permissions_data.sql"/>
-    <include file="db/changelog/scripts/V16_data_initialization_2/import_user_role_data.sql"/>  <!-- missing 2-->
+<!--    <include file="db/changelog/scripts/V16_data_initialization_2/import_user_role_data.sql"/>  &lt;!&ndash; missing 2&ndash;&gt;-->
     <include file="db/changelog/scripts/V17_data_initialization_3/import_new_permission.sql"/>
     <include file="db/changelog/scripts/V17_data_initialization_3/import_permissions_data_2.sql"/>
     <include file="db/changelog/scripts/V17_data_initialization_3/import_permissions_data_3.sql"/>

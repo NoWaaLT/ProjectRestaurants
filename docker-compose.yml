@@ -8,23 +8,23 @@ networks:
     name: springboot-mysql-network
 
 services:
-#  app:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#    container_name: restaurants-app
-#    depends_on:
-#      mysqldb:
-#        condition: service_healthy
-#    environment:
-#      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3307/restaurant_db?createDatabaseIfNotExist=true&useSSL=true
-#      SPRING_DATASOURCE_USERNAME: root
-#      SPRING_DATASOURCE_PASSWORD: 123456789d
-#    networks:
-#      - springboot-mysql-network
-#
-#    ports:
-#      - 8090:8080
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: restaurants-app
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3307/restaurant_db?createDatabaseIfNotExist=true&useSSL=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123456789d
+    networks:
+      - springboot-mysql-network
+
+    ports:
+      - 8090:8080
 
   mysqldb:
     container_name: mysql-container
